@@ -1,12 +1,13 @@
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node<T>{
-    private T data = null;
-    private List<Node> children = new ArrayList<>();
+public class Node {
+    private DataContainer data = null;
+    private ArrayList<Node> children = new ArrayList<>();
     private Node parent = null;
 
-    public Node(T data) {
+    public Node(DataContainer data) {
         this.data = data;
     }
 
@@ -15,28 +16,28 @@ public class Node<T>{
         this.children.add(child);
     }
 
-    public void addChild(T data) {
-        Node<T> newChild = new Node<>(data);
+    public void addChild(DataContainer data) {
+        Node newChild = new Node(data);
         newChild.setParent(this);
         children.add(newChild);
     }
 
     public void addChildren(List<Node> children) {
-        for(Node t : children) {
+        for (Node t : children) {
             t.setParent(this);
         }
         this.children.addAll(children);
     }
 
-    public List<Node> getChildren() {
+    public ArrayList<Node> getChildren() {
         return children;
     }
 
-    public T getData() {
+    public DataContainer getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(DataContainer data) {
         this.data = data;
     }
 
@@ -50,5 +51,33 @@ public class Node<T>{
 
     public boolean isLeaf() {
         return children.isEmpty();
+    }
+
+    public void print() {
+        print("", true);
+    }
+
+    private void print(String prefix, boolean isTail) {
+        System.out.println(prefix + (isTail ? "└── " : "├── ") + data.toString());
+        for (int i = 0; i < children.size() - 1; i++) {
+            children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
+        }
+        if (children.size() > 0) {
+            children.get(children.size() - 1)
+                    .print(prefix + (isTail ? "    " : "│   "), true);
+        }
+    }
+
+
+    public Node getChild(char c) {
+
+
+        for (Node child : children) {
+            if (child.getData().getData() == c) {
+                return child;
+            }
+        }
+
+        return null;
     }
 }

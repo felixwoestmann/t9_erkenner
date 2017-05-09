@@ -1,28 +1,58 @@
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by lostincoding on 09.05.17.
  */
 public class Tree {
-    private ArrayList<Node<String>> leafs = null;
 
-    private Node<String> root = null;
+    private int chunkSize;
+    private Node root = null;
 
-    public Tree() {
-        root = new Node<String>("root");
-        leafs = getLeafs(root);
+    public Tree(int chunkSize) {
+        this.root = new Node(new DataContainer('X'));
+
+        this.chunkSize = chunkSize;
     }
 
-   public
+    public void processString(String input) {
+        ArrayList<char[]> chunks = stringToChunkList(input);
+        for (char[] array : chunks) {
+            processChunk(array);
+        }
+    }
 
-    private ArrayList<Node<String>> getLeafs(Node<String> start) {
-        ArrayList<Node<String>> leafs = new ArrayList<>();
+    private void processChunk(char[] chunk) {
+
+
+        Node previous = root;
+
+        for (int i = 0; i < chunk.length; i++) {
+            root.getData().incrementCount();
+            Node workingon = previous.getChild(chunk[i]);
+
+            if (workingon == null) {
+                Node tmp = new Node(new DataContainer(chunk[i]));
+                previous.addChild(tmp);
+                previous = tmp;
+            } else {
+                workingon.getData().incrementCount();
+                previous = workingon;
+            }
+        }
+    }
+
+
+    private ArrayList<Node> getLeafs(Node start) {
+        ArrayList<Node> leafs = new ArrayList<>();
 
         if (start.isLeaf()) {
             leafs.add(start);
             return leafs;
         } else {
-            for (Node<String> n : start.getChildren()) {
+            for (Node n : start.getChildren()) {
                 leafs.addAll(getLeafs(n));
             }
         }
@@ -31,25 +61,31 @@ public class Tree {
         return leafs;
     }
 
-    private void updateLeafs() {
-        ArrayList<Node<String>> tmplist = new ArrayList<>();
-
-        for (Node<String> n : leafs) {
-            tmplist.addAll(getLeafs(n));
-        }
-
-        leafs=tmplist;
-    }
 
 
-    public Node<String> getRoot() {
+    public Node getRoot() {
         return root;
     }
 
+    private ArrayList<char[]> stringToChunkList(String input) {
+        ArrayList<char[]> chunks = new ArrayList<>();
+        for (int i = 0; i < input.length(); i++) {
 
-    public ArrayList<Node<String>> getLeafs() {
-        return leafs;
+            String chunk = "";
+            if (i + chunkSize <= input.length()) {
+                chunk = input.substring(i, i + chunkSize);
+            } else {
+                int tmpchunksize = input.length() - i;
+                chunk = input.substring(i, i + tmpchunksize);
+            }
+            chunks.add(chunk.toCharArray());
+        }
+
+        return chunks;
     }
 
 
+    public void printTree() {
+        root.print();
+    }
 }
