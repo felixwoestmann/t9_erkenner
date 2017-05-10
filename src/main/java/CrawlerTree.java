@@ -15,6 +15,12 @@ public class CrawlerTree {
         this.chunkSize = chunkSize;
     }
 
+    public CrawlerTree(int chunkSize, CrawlerNode root) {
+        this.root = root;
+
+        this.chunkSize = chunkSize;
+    }
+
     public void processString(String input) {
         ArrayList<char[]> chunks = stringToChunkList(input);
         for (char[] array : chunks) {
@@ -84,5 +90,10 @@ public class CrawlerTree {
 
     public void printTree() {
         root.print();
+    }
+
+
+    public int getChunkSize() {
+        return chunkSize;
     }
 }

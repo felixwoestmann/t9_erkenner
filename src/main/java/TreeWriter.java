@@ -1,6 +1,10 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -14,17 +18,26 @@ public class TreeWriter {
     }
 
 
-    public String createJSONFromTree() {
+    public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
+        String json = createJSONFromTree();
+        PrintWriter writer = new PrintWriter(path, "UTF-8");
+        writer.println(json);
+        writer.close();
 
-        JSONObject treejson = new JSONObject();
+
+    }
+
+    public String createJSONFromTree() {
         ArrayList<CrawlerNode> nodes = getListOfNodes(tree.getRoot());
+        JSONObject jtree = new JSONObject();
         JSONArray jarray = new JSONArray();
+
 
         for (CrawlerNode node : nodes) {
             JSONObject n = new JSONObject();
-            n.put("char", node.getData().getData());
+            n.put("char", node.getData().getData()+"");
             n.put("count", node.getData().getCount());
-
+            n.put("id", node.getId());
             CrawlerNode parent = node.getParent();
             if (parent != null) {
                 n.put("parent", node.getParent().getId());
@@ -35,8 +48,11 @@ public class TreeWriter {
             jarray.add(n);
 
         }
+        jtree.put("chunksize", tree.getChunkSize());
 
-        return jarray.toJSONString();
+        jtree.put("nodes", jarray);
+
+        return jtree.toJSONString();
     }
 
 

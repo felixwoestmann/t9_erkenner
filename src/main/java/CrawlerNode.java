@@ -13,6 +13,8 @@ public class CrawlerNode {
         idcount++;
     }
 
+
+
     public void addChild(CrawlerNode child) {
         child.setParent(this);
         this.children.add(child);

@@ -7,7 +7,11 @@ public class DataContainer {
 
     public DataContainer(char data) {
         this.setData(data);
-        setCount(1);
+        this.count=1;
+    }
+    public DataContainer(char data,int count) {
+        this.setData(data);
+        this.count=count;
     }
 
 
