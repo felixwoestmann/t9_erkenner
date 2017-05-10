@@ -1,18 +1,16 @@
-import javax.xml.crypto.Data;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by lostincoding on 09.05.17.
  */
-public class Tree {
+public class CrawlerTree {
 
     private int chunkSize;
-    private Node root = null;
+    private CrawlerNode root = null;
 
-    public Tree(int chunkSize) {
-        this.root = new Node(new DataContainer('X'));
+    public CrawlerTree(int chunkSize) {
+        this.root = new CrawlerNode(new DataContainer('X'));
 
         this.chunkSize = chunkSize;
     }
@@ -27,14 +25,14 @@ public class Tree {
     private void processChunk(char[] chunk) {
 
 
-        Node previous = root;
+        CrawlerNode previous = root;
 
         for (int i = 0; i < chunk.length; i++) {
             root.getData().incrementCount();
-            Node workingon = previous.getChild(chunk[i]);
+            CrawlerNode workingon = previous.getChild(chunk[i]);
 
             if (workingon == null) {
-                Node tmp = new Node(new DataContainer(chunk[i]));
+                CrawlerNode tmp = new CrawlerNode(new DataContainer(chunk[i]));
                 previous.addChild(tmp);
                 previous = tmp;
             } else {
@@ -45,14 +43,14 @@ public class Tree {
     }
 
 
-    private ArrayList<Node> getLeafs(Node start) {
-        ArrayList<Node> leafs = new ArrayList<>();
+    private ArrayList<CrawlerNode> getLeafs(CrawlerNode start) {
+        ArrayList<CrawlerNode> leafs = new ArrayList<CrawlerNode>();
 
         if (start.isLeaf()) {
             leafs.add(start);
             return leafs;
         } else {
-            for (Node n : start.getChildren()) {
+            for (CrawlerNode n : start.getChildren()) {
                 leafs.addAll(getLeafs(n));
             }
         }
@@ -62,13 +60,12 @@ public class Tree {
     }
 
 
-
-    public Node getRoot() {
+    public CrawlerNode getRoot() {
         return root;
     }
 
     private ArrayList<char[]> stringToChunkList(String input) {
-        ArrayList<char[]> chunks = new ArrayList<>();
+        ArrayList<char[]> chunks = new ArrayList<char[]>();
         for (int i = 0; i < input.length(); i++) {
 
             String chunk = "";

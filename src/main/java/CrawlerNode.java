@@ -1,35 +1,37 @@
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
+public class CrawlerNode {
     private DataContainer data = null;
-    private ArrayList<Node> children = new ArrayList<>();
-    private Node parent = null;
-
-    public Node(DataContainer data) {
+    private int id;
+    private ArrayList<CrawlerNode> children = new ArrayList<>();
+    private CrawlerNode parent = null;
+    public static int idcount=1;
+    public CrawlerNode(DataContainer data) {
         this.data = data;
+        id=idcount;
+        idcount++;
     }
 
-    public void addChild(Node child) {
+    public void addChild(CrawlerNode child) {
         child.setParent(this);
         this.children.add(child);
     }
 
     public void addChild(DataContainer data) {
-        Node newChild = new Node(data);
+        CrawlerNode newChild = new CrawlerNode(data);
         newChild.setParent(this);
         children.add(newChild);
     }
 
-    public void addChildren(List<Node> children) {
-        for (Node t : children) {
+    public void addChildren(List<CrawlerNode> children) {
+        for (CrawlerNode t : children) {
             t.setParent(this);
         }
         this.children.addAll(children);
     }
 
-    public ArrayList<Node> getChildren() {
+    public ArrayList<CrawlerNode> getChildren() {
         return children;
     }
 
@@ -41,11 +43,11 @@ public class Node {
         this.data = data;
     }
 
-    private void setParent(Node parent) {
+    private void setParent(CrawlerNode parent) {
         this.parent = parent;
     }
 
-    public Node getParent() {
+    public CrawlerNode getParent() {
         return parent;
     }
 
@@ -69,15 +71,19 @@ public class Node {
     }
 
 
-    public Node getChild(char c) {
+    public CrawlerNode getChild(char c) {
 
 
-        for (Node child : children) {
+        for (CrawlerNode child : children) {
             if (child.getData().getData() == c) {
                 return child;
             }
         }
 
         return null;
+    }
+
+    public int getId() {
+        return id;
     }
 }
