@@ -22,6 +22,7 @@ public class CrawlerTree {
     }
 
     public void processString(String input) {
+        input = filterString(input);
         ArrayList<char[]> chunks = stringToChunkList(input);
         for (char[] array : chunks) {
             processChunk(array);
@@ -71,7 +72,7 @@ public class CrawlerTree {
     }
 
     private ArrayList<char[]> stringToChunkList(String input) {
-        ArrayList<char[]> chunks = new ArrayList<char[]>();
+        ArrayList<char[]> chunks = new ArrayList<>();
         for (int i = 0; i < input.length(); i++) {
 
             String chunk = "";
@@ -96,4 +97,17 @@ public class CrawlerTree {
     public int getChunkSize() {
         return chunkSize;
     }
+
+    public String filterString(String input) {
+        input = input.toLowerCase();
+        char[] chararray = input.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : chararray) {
+            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c==' ') {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
 }

@@ -19,23 +19,29 @@ public class TreeWriter {
 
 
     public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
+        System.out.println("Started creating json");
+        long start = System.currentTimeMillis();
         String json = createJSONFromTree();
+        long end = System.currentTimeMillis();
+        long time = (end - start) / 1000;
+        System.out.println("Finished creating json " + time);
         PrintWriter writer = new PrintWriter(path, "UTF-8");
         writer.println(json);
         writer.close();
-
-
     }
 
     public String createJSONFromTree() {
+
+
         ArrayList<CrawlerNode> nodes = getListOfNodes(tree.getRoot());
+System.out.print("Tree consists of "+nodes.size()+" Nodes");
         JSONObject jtree = new JSONObject();
         JSONArray jarray = new JSONArray();
 
 
         for (CrawlerNode node : nodes) {
-            JSONObject n = new JSONObject();
-            n.put("char", node.getData().getData()+"");
+            JSONObject  n = new JSONObject();
+            n.put("char", node.getData().getData() + "");
             n.put("count", node.getData().getCount());
             n.put("id", node.getId());
             CrawlerNode parent = node.getParent();

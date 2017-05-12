@@ -34,7 +34,7 @@ public class TreeReader {
     }
 
     public CrawlerTree getTreeFromFile(String path) throws IOException {
-        String json = readFile(path);
+        String json = FileReader.readFile(path);
         CrawlerTree tree = null;
         try {
             tree = parseJSON(json);
@@ -45,25 +45,7 @@ public class TreeReader {
         return tree;
     }
 
-    private String readFile(String path) throws IOException {
-        String content = null;
-        File file = new File(path); //for ex foo.txt
-        FileReader reader = null;
-        try {
-            reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
-            reader.read(chars);
-            content = new String(chars);
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-        return content;
-    }
+
 
     private ArrayList<CrawlerNodeContainer> getNodesFromJSONArray(JSONArray array) {
         ArrayList<CrawlerNodeContainer> container = new ArrayList<>();
