@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String args[]) {
 
-        CrawlerTree tree = new CrawlerTree(3);
+        CrawlerTree tree = new CrawlerTree(5);
         CorpusReader corpusReader=new CorpusReader();
 
         System.out.println("Start processing wiki dump");

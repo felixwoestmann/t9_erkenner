@@ -24,7 +24,7 @@ public class TreeWriter {
         String json = createJSONFromTree();
         long end = System.currentTimeMillis();
         long time = (end - start) / 1000;
-        System.out.println("Finished creating json " + time);
+        System.out.println("Finished creating json " + time+" seconds");
         PrintWriter writer = new PrintWriter(path, "UTF-8");
         writer.println(json);
         writer.close();
