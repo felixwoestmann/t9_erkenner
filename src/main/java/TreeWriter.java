@@ -17,6 +17,9 @@ public class TreeWriter {
 
 
     public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
+       //open print writer
+        PrintWriter writer = new PrintWriter(path, "UTF-8");
+
         CrawlerNode root = tree.getRoot();
         //print begin of json with tree data
         StringBuilder sb = new StringBuilder();
@@ -24,18 +27,23 @@ public class TreeWriter {
 
         sb.append("\n");
         //add root
-        sb.append(createJSONObjectStringFromSingleNode(root));
+        sb.append(createJSONObjectStringFromSingleNode(root)).append(",");
+
+        writer.println(sb.toString());
+        sb=new StringBuilder();
         // add other nodes
         for (CrawlerNode crawlerNode : root.getChildren()) {
             sb.append(createJSONArrayStringFromNodes(crawlerNode));
-            sb.append("\n");
+            sb.append(",\n");
+            writer.println(sb.toString());
+            sb=new StringBuilder();
         }
 
 
         //finalize everything
         sb.append("],\"chunksize\":").append(tree.getChunkSize()).append("}");
 
-        PrintWriter writer = new PrintWriter(path, "UTF-8");
+
         writer.println(sb.toString());
         writer.close();
     }

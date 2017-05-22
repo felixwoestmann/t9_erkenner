@@ -12,20 +12,20 @@ public class Main {
 
     public static void main(String args[]) {
 
-        CrawlerTree tree = new CrawlerTree(5);
-        CorpusReader corpusReader=new CorpusReader();
+        CrawlerTree writeTree = new CrawlerTree(3);
+        CorpusReader corpusReader = new CorpusReader();
 
         System.out.println("Start processing wiki dump");
-        long start=System.currentTimeMillis();
-        corpusReader.processWikiDump(tree,"/home/lostincoding/Schreibtisch/wikidump-out");
-        long end=System.currentTimeMillis();
-        System.out.println("Processing wiki dump took "+milliSecondsToSecond(end-start)+" seconds");
+        long start = System.currentTimeMillis();
+        corpusReader.processWikiDump(writeTree, "/home/lostincoding/Schreibtisch/wikidump-out");
+        long end = System.currentTimeMillis();
+        System.out.println("Processing wiki dump took " + milliSecondsToSecond(end - start) + " seconds");
 
-       // tree.printTree();
+        // tree.printTree();
 
-        String persistingPath="/home/lostincoding/git/asp_crawler/tree.json";
-        System.out.println("Persist Tree on HardDrive. Directory: "+persistingPath);
-        TreeWriter writer = new TreeWriter(tree);
+        String persistingPath = "/home/lostincoding/git/asp_crawler/tree.json";
+        System.out.println("Persist Tree on HardDrive. Directory: " + persistingPath);
+        TreeWriter writer = new TreeWriter(writeTree);
         try {
             writer.writeToFile(persistingPath);
         } catch (FileNotFoundException e) {
@@ -34,45 +34,26 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("Persisting finished.");
+
+        CrawlerTree readTree = null;
         System.out.println("Read persisted tree.");
+        TreeReader reader = new TreeReader();
         try {
-            tree.processString(FileReader.readFile(persistingPath));
+            readTree = reader.getTreeFromFile(persistingPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("Aufbau des Baums abgeschlossen");
         System.out.println("Baum:\n\n");
-        tree.printTree();
-
-/*
-        TreeWriter writer = new TreeWriter(tree);
-        System.out.println("JSON:\n\n");
-        System.out.println(writer.createJSONFromTree());
-
-        try {
-            writer.writeToFile("/home/lostincoding/Schreibtisch/tree.json");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Gelesener Baum:\n\n");
-        TreeReader reader = new TreeReader();
-        CrawlerTree readTree = null;
-        try {
-            readTree = reader.getTreeFromFile("/home/lostincoding/Schreibtisch/tree.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        readTree.printTree();*/
+        System.out.println("Sind die beiden Bäume identisch? " + areTreeIdentical(writeTree, readTree));
 
     }
 
     private static long milliSecondsToSecond(long millis) {
-        return millis/1000;
+        return millis / 1000;
     }
 
+    private static boolean areTreeIdentical(CrawlerTree tree1, CrawlerTree tree2) {
+        return tree1.toString().equals(tree2.toString());
+    }
 }

@@ -93,6 +93,10 @@ public class CrawlerTree {
         root.print();
     }
 
+    public String toString() {
+        return root.getStringRepresentation();
+    }
+
 
     public int getChunkSize() {
         return chunkSize;
