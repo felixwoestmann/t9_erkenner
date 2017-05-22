@@ -24,7 +24,7 @@ public class TreeWriter {
         String json = createJSONFromTree();
         long end = System.currentTimeMillis();
         long time = (end - start) / 1000;
-        System.out.println("Finished creating json " + time+" seconds");
+        System.out.println("Finished creating json " + time + " seconds");
         PrintWriter writer = new PrintWriter(path, "UTF-8");
         writer.println(json);
         writer.close();
@@ -34,13 +34,13 @@ public class TreeWriter {
 
 
         ArrayList<CrawlerNode> nodes = getListOfNodes(tree.getRoot());
-System.out.print("Tree consists of "+nodes.size()+" Nodes");
+        System.out.print("Tree consists of " + nodes.size() + " Nodes");
         JSONObject jtree = new JSONObject();
         JSONArray jarray = new JSONArray();
 
 
         for (CrawlerNode node : nodes) {
-            JSONObject  n = new JSONObject();
+            JSONObject n = new JSONObject();
             n.put("char", node.getData().getData() + "");
             n.put("count", node.getData().getCount());
             n.put("id", node.getId());
@@ -63,7 +63,7 @@ System.out.print("Tree consists of "+nodes.size()+" Nodes");
 
 
     private ArrayList<CrawlerNode> getListOfNodes(CrawlerNode node) {
-        ArrayList<CrawlerNode> nodes = new ArrayList<CrawlerNode>();
+        ArrayList<CrawlerNode> nodes = new ArrayList<>();
         ArrayList<CrawlerNode> children;
 
         nodes.add(node);
@@ -78,5 +78,6 @@ System.out.print("Tree consists of "+nodes.size()+" Nodes");
         return nodes;
     }
 
+ 
 
 }
