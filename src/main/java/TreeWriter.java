@@ -1,8 +1,6 @@
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -19,51 +17,64 @@ public class TreeWriter {
 
 
     public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
-        System.out.println("Started creating json");
-        long start = System.currentTimeMillis();
-        String json = createJSONFromTree();
-        long end = System.currentTimeMillis();
-        long time = (end - start) / 1000;
-        System.out.println("Finished creating json " + time + " seconds");
+        CrawlerNode root = tree.getRoot();
+        //print begin of json with tree data
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"nodes\":[");
+
+        sb.append("\n");
+        //add root
+        sb.append(createJSONObjectStringFromSingleNode(root));
+        // add other nodes
+        for (CrawlerNode crawlerNode : root.getChildren()) {
+            sb.append(createJSONArrayStringFromNodes(crawlerNode));
+            sb.append("\n");
+        }
+
+
+        //finalize everything
+        sb.append("],\"chunksize\":").append(tree.getChunkSize()).append("}");
+
         PrintWriter writer = new PrintWriter(path, "UTF-8");
-        writer.println(json);
+        writer.println(sb.toString());
         writer.close();
     }
 
-    public String createJSONFromTree() {
+    private String createJSONArrayStringFromNodes(CrawlerNode node) {
+        ArrayList<CrawlerNode> nodes = getListOfNodes(node);
+        StringBuilder sb = new StringBuilder();
 
-
-        ArrayList<CrawlerNode> nodes = getListOfNodes(tree.getRoot());
-        System.out.print("Tree consists of " + nodes.size() + " Nodes");
-        JSONObject jtree = new JSONObject();
-        JSONArray jarray = new JSONArray();
-
-
-        for (CrawlerNode node : nodes) {
-            JSONObject n = new JSONObject();
-            n.put("char", node.getData().getData() + "");
-            n.put("count", node.getData().getCount());
-            n.put("id", node.getId());
-            CrawlerNode parent = node.getParent();
-            if (parent != null) {
-                n.put("parent", node.getParent().getId());
-            } else {
-                n.put("parent", "-1");
-            }
-
-            jarray.add(n);
-
+        for (CrawlerNode crawlerNode : nodes) {
+            sb.append(createJSONObjectStringFromSingleNode(crawlerNode));
+            sb.append(",");
         }
-        jtree.put("chunksize", tree.getChunkSize());
 
-        jtree.put("nodes", jarray);
+        //remove last komma
+        String returnvalue = sb.toString();
+        return returnvalue.substring(0, returnvalue.length() - 1);
+    }
 
-        return jtree.toJSONString();
+
+    private String createJSONObjectStringFromSingleNode(CrawlerNode node) {
+        //use numbers instead of strings to save disk space
+        JSONObject n = new JSONObject();
+        n.put("1", node.getData().getData() + ""); //char
+        n.put("2", node.getData().getCount()); //count
+        n.put("3", node.getId()); //id
+        CrawlerNode parent = node.getParent();
+
+        if (parent != null) {
+            n.put("4", node.getParent().getId()); //parent
+        } else {
+            n.put("4", "-1"); //parent
+        }
+
+        return n.toJSONString();
     }
 
 
     private ArrayList<CrawlerNode> getListOfNodes(CrawlerNode node) {
-        ArrayList<CrawlerNode> nodes = new ArrayList<>();
+        ArrayList<CrawlerNode> nodes = new ArrayList<CrawlerNode>();
         ArrayList<CrawlerNode> children;
 
         nodes.add(node);
@@ -77,7 +88,4 @@ public class TreeWriter {
         }
         return nodes;
     }
-
- 
-
 }

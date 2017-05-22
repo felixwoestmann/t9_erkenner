@@ -34,8 +34,9 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("Persisting finished.");
-       /* try {
-            tree.processString(FileReader.readFile("/home/lostincoding/Schreibtisch/lorem_ipsum_txt"));
+        System.out.println("Read persisted tree.");
+        try {
+            tree.processString(FileReader.readFile(persistingPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,7 +44,7 @@ public class Main {
         System.out.println("Baum:\n\n");
         tree.printTree();
 
-
+/*
         TreeWriter writer = new TreeWriter(tree);
         System.out.println("JSON:\n\n");
         System.out.println(writer.createJSONFromTree());

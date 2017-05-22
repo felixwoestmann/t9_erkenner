@@ -55,11 +55,11 @@ public class TreeReader {
         for (Object o : array) {
             JSONObject jo = (JSONObject) o;
 
-            char c = ((String) jo.get("char")).charAt(0);
-            int count = ((Long) jo.get("count")).intValue();
-            int id = ((Long) jo.get("id")).intValue();
+            char c = ((String) jo.get("1")).charAt(0);  //char
+            int count = ((Long) jo.get("2")).intValue(); //count
+            int id = ((Long) jo.get("3")).intValue(); //id
             int parent;
-            Object todecide = jo.get("parent");
+            Object todecide = jo.get("4"); //parent
 
             if (todecide instanceof String) {
                 parent = Integer.parseInt((String) todecide);

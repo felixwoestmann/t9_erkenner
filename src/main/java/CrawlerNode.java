@@ -6,13 +6,13 @@ public class CrawlerNode {
     private int id;
     private ArrayList<CrawlerNode> children = new ArrayList<>();
     private CrawlerNode parent = null;
-    public static int idcount=1;
+    public static int idcount = 1;
+
     public CrawlerNode(DataContainer data) {
         this.data = data;
-        id=idcount;
+        id = idcount;
         idcount++;
     }
-
 
 
     public void addChild(CrawlerNode child) {
@@ -58,17 +58,24 @@ public class CrawlerNode {
     }
 
     public void print() {
-        print("", true);
+        System.out.println(getStringRepresentation());
     }
 
-    private void print(String prefix, boolean isTail) {
-        System.out.println(prefix + (isTail ? "└── " : "├── ") + data.toString());
+
+    public String getStringRepresentation() {
+        StringBuilder sb = new StringBuilder();
+        getStringRepresentation("", sb, true);
+        return sb.toString();
+    }
+
+    private void getStringRepresentation(String prefix, StringBuilder sb, boolean isTail) {
+        sb.append(prefix + (isTail ? "└── " : "├── ") + data.toString()).append("\n");
         for (int i = 0; i < children.size() - 1; i++) {
-            children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
+            children.get(i).getStringRepresentation(prefix + (isTail ? "    " : "│   "), sb, false);
         }
         if (children.size() > 0) {
             children.get(children.size() - 1)
-                    .print(prefix + (isTail ? "    " : "│   "), true);
+                    .getStringRepresentation(prefix + (isTail ? "    " : "│   "), sb, true);
         }
     }
 
