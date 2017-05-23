@@ -4,7 +4,7 @@ import java.io.IOException;
 /**
  * Created by lostincoding on 09.05.17
  */
-public class CorpusReader {
+public class WikiDumpReader {
 
 
     public void processWikiDump(CrawlerTree tree, String path) {
