@@ -15,15 +15,15 @@ public class ProbabilityCalculator {
         return getProbOfCharOnLevel(tree.getRoot(), c);
     }
 
-    public double probOfTwoChars(char one,char two) {
+    public double probOfTwoChars(char one, char two) {
 
 
-        CrawlerNode c1node = getChildWithCharAsData(tree.getRoot(),two);
+        CrawlerNode c1node = getChildWithCharAsData(tree.getRoot(), one);
 
         double probOfOne = getProbOfCharOnLevel(tree.getRoot(), one);
         double probOfTwo = getProbOfCharOnLevel(c1node, two);
 
-        return probOfOne* probOfTwo;
+        return probOfOne * probOfTwo;
     }
 
     public double probOfString(String string) {
