@@ -65,7 +65,7 @@ public class WikiDumpReader {
         //remove the doc lines and unnecessary \n
         article = article.replaceAll("<doc.*>", "");
         article = article.replaceAll("\n+", "\n");
-
+        article=article.toLowerCase();
         return article;
     }
 

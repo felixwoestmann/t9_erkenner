@@ -1,31 +1,33 @@
-import sun.reflect.generics.tree.Tree;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Random;
 
 /**
  * Created by lostincoding on 09.05.17.
  */
 public class Main {
+    private static String persistingPath = "/home/lostincoding/git/asp_crawler/tree.json";
 
     public static void main(String args[]) {
 
-        CrawlerTree writeTree = new CrawlerTree(3);
-        CorpusReader corpusReader = new CorpusReader();
+        CrawlerTree tree = new CrawlerTree(5);
+        WikiDumpReader corpusReader = new WikiDumpReader();
 
         System.out.println("Start processing wiki dump");
         long start = System.currentTimeMillis();
-        corpusReader.processWikiDump(writeTree, "/home/lostincoding/Schreibtisch/wikidump-out");
+        corpusReader.processWikiDump(tree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
         long end = System.currentTimeMillis();
         System.out.println("Processing wiki dump took " + milliSecondsToSecond(end - start) + " seconds");
 
-        // tree.printTree();
+        ProbabilityCalculator probabilityCalculator=new ProbabilityCalculator(tree);
+        double probOfFelix=probabilityCalculator.probOfString("felix");
 
-        String persistingPath = "/home/lostincoding/git/asp_crawler/tree.json";
+    System.out.format("Die Wahrscheinlichkeit für Felix in der deutschen Wikipedia ist %f.\n",probOfFelix);
+    }
+
+    private static void persistTree(CrawlerTree tree) {
         System.out.println("Persist Tree on HardDrive. Directory: " + persistingPath);
-        TreeWriter writer = new TreeWriter(writeTree);
+        TreeWriter writer = new TreeWriter(tree);
         try {
             writer.writeToFile(persistingPath);
         } catch (FileNotFoundException e) {
@@ -34,7 +36,9 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("Persisting finished.");
+    }
 
+    private static CrawlerTree loadTree() {
         CrawlerTree readTree = null;
         System.out.println("Read persisted tree.");
         TreeReader reader = new TreeReader();
@@ -44,9 +48,7 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("Aufbau des Baums abgeschlossen");
-        System.out.println("Baum:\n\n");
-        System.out.println("Sind die beiden Bäume identisch? " + areTreeIdentical(writeTree, readTree));
-
+        return readTree;
     }
 
     private static long milliSecondsToSecond(long millis) {

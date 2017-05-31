@@ -17,7 +17,7 @@ public class ProbCalcTest {
 
     @Before
     public void setUp() {
-        int chunksize = 4;
+        int chunksize = 6;
         String testFilePath = "./test_text.txt";
 
 
@@ -76,7 +76,7 @@ public class ProbCalcTest {
 
     @Test
     public void testProbOfStringWithProbOfTwoChars() {
-        ArrayList<String> strings=new ArrayList<>();
+        ArrayList<String> strings = new ArrayList<>();
         strings.add("th");
         strings.add("ab");
         strings.add("fe");
@@ -85,11 +85,27 @@ public class ProbCalcTest {
         strings.add("hr");
 
         for (String string : strings) {
-            double twoCharProb=probCalc.probOfTwoChars(string.charAt(0),string.charAt(1));
-            double stringProb=probCalc.probOfString(string);
-            System.out.format("Probability for %s is with twoChar Method %f and with string method %f.\n",string,twoCharProb,stringProb);
-            Assert.assertEquals(twoCharProb,stringProb,0.0005);
+            double twoCharProb = probCalc.probOfTwoChars(string.charAt(0), string.charAt(1));
+            double stringProb = probCalc.probOfString(string);
+            System.out.format("Probability for %s is with twoChar Method %f and with string method %f.\n", string, twoCharProb, stringProb);
+            Assert.assertEquals(twoCharProb, stringProb, 0.0005);
         }
+    }
+
+    @Test
+    public void testProbOfCharWithDefinedPrefix() {
+        String prefix = "cybe";
+        char s1 = 'r';
+        char s2 = 'l';
+        char s3 = 'h';
+        r1 = probCalc.probOfCharWithDefinedPrefix(prefix, s1);
+        r2 = probCalc.probOfCharWithDefinedPrefix(prefix, s2);
+        r3 = probCalc.probOfCharWithDefinedPrefix(prefix, s3);
+
+        System.out.format("Probability for prefix %s with suffix %c is %f.\n", prefix, s1,r1);
+        System.out.format("Probability for prefix %s with suffix %c is %f.\n", prefix, s2,r2);
+        System.out.format("Probability for prefix %s with suffix %c is %f.\n", prefix, s3,r3);
+
     }
 
 }
