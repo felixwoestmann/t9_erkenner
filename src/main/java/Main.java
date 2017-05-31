@@ -30,9 +30,7 @@ public class Main {
         TreeWriter writer = new TreeWriter(tree);
         try {
             writer.writeToFile(persistingPath);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         System.out.println("Persisting finished.");
