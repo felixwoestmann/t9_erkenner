@@ -14,13 +14,18 @@ public class Main {
         WikiDumpReader corpusReader = new WikiDumpReader();
         corpusReader.processWikiDump(wikipediaTree, "../wikidump");
 
+        calculateProbOfWordInTree("Felix", wikipediaTree);
     }
 
+    private static void calculateProbOfWordInTree(String searchString, CrawlerTree tree) {
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(tree);
-        String searchString = "Felix";
         double probOfString = probabilityCalculator.probOfString(searchString.toLowerCase());
 
-        System.out.format("Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n", searchString, probOfString);
+        System.out.format(
+            "Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n",
+            searchString,
+            probOfString
+        );
     }
 
     private static void persistTree(CrawlerTree tree) {
