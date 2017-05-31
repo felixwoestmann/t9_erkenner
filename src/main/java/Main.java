@@ -19,7 +19,7 @@ public class Main {
 
     private static void calculateProbOfWordInTree(String searchString, CrawlerTree tree) {
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(tree);
-        double probOfString = probabilityCalculator.probOfString(searchString.toLowerCase());
+        double probOfString = probabilityCalculator.probOfStringSmallerThanChunkSize(searchString.toLowerCase());
 
         System.out.format(
             "Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n",

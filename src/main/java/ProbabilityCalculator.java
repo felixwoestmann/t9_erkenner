@@ -26,31 +26,29 @@ public class ProbabilityCalculator {
         return probOfOne * probOfTwo;
     }
 
-    public double probOfString(String string) {
+    public double probOfStringSmallerThanChunkSize(String string) {
         if (string.length() > tree.getChunkSize()) {
             throw new IllegalArgumentException("Length of String is too big");
         }
 
-
         char[] chars = string.toCharArray();
 
-        double returnval = 1;
+        double overallProbability = 1;
 
         CrawlerNode actNode = tree.getRoot();
         for (char c : chars) {
-            double prob = getProbOfCharOnLevel(actNode, c);
+            double singleCharProbabilityOnGivenNode = getProbOfCharOnLevel(actNode, c);
             actNode = getChildWithCharAsData(actNode, c);
-            returnval *= prob;
+            overallProbability *= singleCharProbabilityOnGivenNode;
         }
 
-
-        return returnval;
+        return overallProbability;
     }
 
     public double probOfCharWithDefinedPrefix(String prefix, char c) {
         String complete = prefix + c;
-        double completeProb = probOfString(complete);
-        double prefixProb = probOfString(prefix);
+        double completeProb = probOfStringSmallerThanChunkSize(complete);
+        double prefixProb = probOfStringSmallerThanChunkSize(prefix);
         return completeProb / prefixProb;
     }
 
