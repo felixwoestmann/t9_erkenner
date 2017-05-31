@@ -8,6 +8,8 @@ public class WikiDumpReader {
 
 
     public void processWikiDump(CrawlerTree tree, String path) {
+        System.out.println("Start processing wiki dump");
+        long start = System.currentTimeMillis();
         File wikidumpdir = new File(path);
 
         if (!wikidumpdir.isDirectory()) {
@@ -24,6 +26,8 @@ public class WikiDumpReader {
             }
         }
 
+        long end = System.currentTimeMillis();
+        System.out.println("Processing wiki dump took " + milliSecondsToSecond(end - start) + " seconds");
     }
 
 
@@ -69,5 +73,8 @@ public class WikiDumpReader {
         return article;
     }
 
+    private long milliSecondsToSecond(long millis) {
+        return millis / 1000;
+    }
 
 }

@@ -10,14 +10,11 @@ public class Main {
 
     public static void main(String args[]) {
 
-        CrawlerTree tree = new CrawlerTree(5);
+        CrawlerTree wikipediaTree = new CrawlerTree(5);
         WikiDumpReader corpusReader = new WikiDumpReader();
+        corpusReader.processWikiDump(wikipediaTree, "../wikidump");
 
-        System.out.println("Start processing wiki dump");
-        long start = System.currentTimeMillis();
-        corpusReader.processWikiDump(tree, "../wikidump");
-        long end = System.currentTimeMillis();
-        System.out.println("Processing wiki dump took " + milliSecondsToSecond(end - start) + " seconds");
+    }
 
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(tree);
         String searchString = "Felix";
@@ -48,10 +45,6 @@ public class Main {
         }
         System.out.println("Aufbau des Baums abgeschlossen");
         return readTree;
-    }
-
-    private static long milliSecondsToSecond(long millis) {
-        return millis / 1000;
     }
 
     private static boolean areTreeIdentical(CrawlerTree tree1, CrawlerTree tree2) {
