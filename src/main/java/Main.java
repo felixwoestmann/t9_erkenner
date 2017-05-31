@@ -28,11 +28,11 @@ public class Main {
         );
     }
 
-    private static void persistTree(CrawlerTree tree) {
-        System.out.println("Persist Tree on HardDrive. Directory: " + persistingPath);
+    private static void persistTree(CrawlerTree tree, String path) {
+        System.out.println("Persist Tree on HardDrive. Directory: " + path);
         TreeWriter writer = new TreeWriter(tree);
         try {
-            writer.writeToFile(persistingPath);
+            writer.writeToFile(path);
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
