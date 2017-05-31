@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
  * Created by lostincoding on 09.05.17.
  */
 public class Main {
-    private static String persistingPath = "/home/lostincoding/git/asp_crawler/tree.json";
+    private static String persistingPath = "./tree.json";
 
     public static void main(String args[]) {
 
@@ -15,14 +15,15 @@ public class Main {
 
         System.out.println("Start processing wiki dump");
         long start = System.currentTimeMillis();
-        corpusReader.processWikiDump(tree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
+        corpusReader.processWikiDump(tree, "../wikidump");
         long end = System.currentTimeMillis();
         System.out.println("Processing wiki dump took " + milliSecondsToSecond(end - start) + " seconds");
 
-        ProbabilityCalculator probabilityCalculator=new ProbabilityCalculator(tree);
-        double probOfFelix=probabilityCalculator.probOfString("felix");
+        ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(tree);
+        String searchString = "Felix";
+        double probOfString = probabilityCalculator.probOfString(searchString.toLowerCase());
 
-    System.out.format("Die Wahrscheinlichkeit für Felix in der deutschen Wikipedia ist %f.\n",probOfFelix);
+        System.out.format("Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n", searchString, probOfString);
     }
 
     private static void persistTree(CrawlerTree tree) {
