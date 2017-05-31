@@ -1,4 +1,6 @@
 import utilitiy.FileReader;
+import utilitiy.TimeUnit;
+import utilitiy.Timer;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +12,10 @@ public class WikiDumpReader {
 
 
     public void processWikiDump(CrawlerTree tree, String path) {
+        Timer timer = new Timer();
         System.out.println("Start processing wiki dump");
-        long start = System.currentTimeMillis();
+
+        timer.start();
         File wikidumpdir = new File(path);
 
         if (!wikidumpdir.isDirectory()) {
@@ -28,8 +32,8 @@ public class WikiDumpReader {
             }
         }
 
-        long end = System.currentTimeMillis();
-        System.out.println("Processing wiki dump took " + milliSecondsToSecond(end - start) + " seconds");
+        timer.stop();
+        System.out.println("Processing wiki dump took " + timer.getTime(TimeUnit.SECONDS) + " seconds");
     }
 
 
@@ -71,7 +75,7 @@ public class WikiDumpReader {
         //remove the doc lines and unnecessary \n
         article = article.replaceAll("<doc.*>", "");
         article = article.replaceAll("\n+", "\n");
-        article=article.toLowerCase();
+        article = article.toLowerCase();
         return article;
     }
 
