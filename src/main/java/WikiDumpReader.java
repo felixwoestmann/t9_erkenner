@@ -7,7 +7,7 @@ import java.io.IOException;
 public class WikiDumpReader {
 
 
-    public void processWikiDump(CrawlerTree tree, String path) {
+    public static void processWikiDump(CrawlerTree tree, String path) {
         System.out.println("Start processing wiki dump");
         long start = System.currentTimeMillis();
         File wikidumpdir = new File(path);
@@ -31,7 +31,7 @@ public class WikiDumpReader {
     }
 
 
-    private String processDirectory(File file) {
+    private static String processDirectory(File file) {
         if (!file.isDirectory()) {
             throw new IllegalArgumentException("Error: Path has to be directory");
         }
@@ -47,7 +47,7 @@ public class WikiDumpReader {
     }
 
 
-    private String getTextFromFile(File file) {
+    private static String getTextFromFile(File file) {
         String filecontent = "";
         try {
             filecontent = FileReader.readFile(file);
@@ -65,15 +65,15 @@ public class WikiDumpReader {
         return sb.toString();
     }
 
-    private String extractTextFromArticle(String article) {
+    private static String extractTextFromArticle(String article) {
         //remove the doc lines and unnecessary \n
         article = article.replaceAll("<doc.*>", "");
         article = article.replaceAll("\n+", "\n");
-        article=article.toLowerCase();
+        article = article.toLowerCase();
         return article;
     }
 
-    private long milliSecondsToSecond(long millis) {
+    private static long milliSecondsToSecond(long millis) {
         return millis / 1000;
     }
 

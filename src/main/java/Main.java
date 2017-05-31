@@ -6,13 +6,12 @@ import java.io.UnsupportedEncodingException;
  * Created by lostincoding on 09.05.17.
  */
 public class Main {
-    private static String persistingPath = "./tree.json";
+    private static String treeLocationPath = "./tree.json";
 
     public static void main(String args[]) {
 
         CrawlerTree wikipediaTree = new CrawlerTree(5);
-        WikiDumpReader corpusReader = new WikiDumpReader();
-        corpusReader.processWikiDump(wikipediaTree, "../wikidump");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
 
         calculateProbOfWordInTree("Felix", wikipediaTree);
     }
