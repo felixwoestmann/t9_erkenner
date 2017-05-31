@@ -12,7 +12,7 @@ public class Main {
 
         CrawlerTree wikipediaTree = new CrawlerTree(5);
         WikiDumpReader corpusReader = new WikiDumpReader();
-        corpusReader.processWikiDump(wikipediaTree, "../wikidump");
+        corpusReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
 
         calculateProbOfWordInTree("Felix", wikipediaTree);
     }

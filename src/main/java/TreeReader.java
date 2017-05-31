@@ -6,18 +6,21 @@ import sun.misc.IOUtils;
 
 import javax.xml.crypto.Data;
 import javax.xml.soap.Node;
-import java.io.*;
+
+import utilitiy.FileReader;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by lostincoding on 10.05.17.
  */
 public class TreeReader {
 
-    public TreeReader() {
-
-    }
 
     public CrawlerTree parseJSON(String json) throws ParseException {
 
@@ -44,7 +47,6 @@ public class TreeReader {
 
         return tree;
     }
-
 
 
     private ArrayList<CrawlerNodeContainer> getNodesFromJSONArray(JSONArray array) {
@@ -78,29 +80,50 @@ public class TreeReader {
     private CrawlerNode mapNodes(ArrayList<CrawlerNodeContainer> list) {
 
         CrawlerNode root = null;
-        CrawlerNodeContainer rootContainer=null;
+        CrawlerNodeContainer rootContainer = null;
 
+        //get root node an container
         for (CrawlerNodeContainer container : list) {
-            if (container.getParent()==-1) {
-                root=container.getNode();
-                rootContainer=container;
+            if (container.getParent() == -1) {
+                root = container.getNode();
+                rootContainer = container;
+                break;
             }
         }
 
+        // get children from root node
+        ArrayList<CrawlerNodeContainer> rootChildren = CrawlerNodeContainer.getChildNodesFromList(list, rootContainer.getId());
 
-        getChilds(list,rootContainer);
+        //create executor service with number of threads = count of processors
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        Future<?>[] threads = new Future<?>[rootChildren.size()];
+        for (int i = 0; i < rootChildren.size(); i++) {
+            int j = i;
+            threads[i] = executorService.submit(() -> getChilds(list, rootChildren.get(j)));
+        }
 
+        //wait until all threads are finished
+        try {
+            for (int i = 0; i < threads.length; i++) {
+                threads[i].get();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //put everything back together
+        root.addChildren(CrawlerNodeContainer.containerListToNodeList(rootChildren));
         return root;
     }
 
     private void getChilds(ArrayList<CrawlerNodeContainer> list, CrawlerNodeContainer container) {
-        CrawlerNode node=container.getNode();
-        ArrayList<CrawlerNodeContainer> nodes=CrawlerNodeContainer.getChildNodesFromList(list,container.getId());
+        CrawlerNode node = container.getNode();
+        ArrayList<CrawlerNodeContainer> nodes = CrawlerNodeContainer.getChildNodesFromList(list, container.getId());
 
-        if(!nodes.isEmpty()) {
+        if (!nodes.isEmpty()) {
             node.addChildren(CrawlerNodeContainer.containerListToNodeList(nodes));
             for (CrawlerNodeContainer crawlerNodeContainer : nodes) {
-                getChilds(list,crawlerNodeContainer);
+                getChilds(list, crawlerNodeContainer);
             }
         }
     }
