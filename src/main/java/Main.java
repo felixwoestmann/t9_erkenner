@@ -13,8 +13,8 @@ public class Main {
         CrawlerTree wikipediaTree = new CrawlerTree(5);
         WikiDumpReader corpusReader = new WikiDumpReader();
         corpusReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
-
-        calculateProbOfWordInTree("Felix", wikipediaTree);
+        persistTree(wikipediaTree, "/home/lostincoding/Schreibtisch/tree_tree.json");
+        //    calculateProbOfWordInTree("Felix", wikipediaTree);
     }
 
     private static void calculateProbOfWordInTree(String searchString, CrawlerTree tree) {
@@ -22,9 +22,9 @@ public class Main {
         double probOfString = probabilityCalculator.probOfString(searchString.toLowerCase());
 
         System.out.format(
-            "Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n",
-            searchString,
-            probOfString
+                "Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n",
+                searchString,
+                probOfString
         );
     }
 
@@ -52,7 +52,5 @@ public class Main {
         return readTree;
     }
 
-    private static boolean areTreeIdentical(CrawlerTree tree1, CrawlerTree tree2) {
-        return tree1.toString().equals(tree2.toString());
-    }
+
 }

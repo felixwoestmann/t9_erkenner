@@ -44,6 +44,8 @@ public class TreeReaderTest {
         timer.printTimeWithMessage("Das Laden eines WikiBaumes mit der Chunk Größe 5\nSekunden:", TimeUnit.SECONDS);
     }
 
+
+
     @Test
     public void testAccuracyOfLoadingTree() throws IOException {
 
@@ -53,7 +55,7 @@ public class TreeReaderTest {
         WikiDumpReader corpusReader = new WikiDumpReader();
         corpusReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
 
-        System.out.println("Persist Tree on HardDrive. Directory: " + path);
+        wikipediaTree.printTree();
         TreeWriter writer = new TreeWriter(wikipediaTree);
         try {
             writer.writeToFile(path);
@@ -108,9 +110,9 @@ public class TreeReaderTest {
         }
 
         if (readTime > processTime) {
-            System.out.println("Processing the string was " + (readTime-processTime) + " seconds faster.");
+            System.out.println("Processing the string was " + (readTime - processTime) + " seconds faster.");
         } else {
-            System.out.println("Reading the file was " + (processTime-readTime) + " seconds faster.");
+            System.out.println("Reading the file was " + (processTime - readTime) + " seconds faster.");
         }
 
     }

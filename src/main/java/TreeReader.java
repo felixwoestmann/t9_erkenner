@@ -10,9 +10,7 @@ import javax.xml.soap.Node;
 import utilitiy.FileReader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -84,18 +82,13 @@ public class TreeReader {
         CrawlerNodeContainer rootContainer = null;
 
         //get root node an container
-        for (CrawlerNodeContainer container : list) {
-            if (container.getParent() == -1) {
-                root = container.getNode();
-                rootContainer = container;
-                break;
-            }
-        }
+        rootContainer = list.get(0);
+        root = rootContainer.getNode();
 
         // get children from root node
         ArrayList<CrawlerNodeContainer> rootChildren = getChildNodesFromList(list, rootContainer.getId());
 
-        //split list into one for ech child of root
+        //split list into one for each child of root
         ArrayList<ArrayList<CrawlerNodeContainer>> lists = new ArrayList<>();
         for (int i = 0; i < rootChildren.size(); i++) {
             int startId = rootChildren.get(i).getId();
@@ -106,7 +99,6 @@ public class TreeReader {
                 stopId = rootChildren.get(i + 1).getId();
             }
             ArrayList<CrawlerNodeContainer> partList = getNodesBetweenIds(startId, stopId, list);
-            partList.sort((o1, o2) -> o1.getId() - o2.getId());
             lists.add(partList);
         }
 
@@ -157,16 +149,16 @@ public class TreeReader {
     }
 
     private ArrayList<CrawlerNodeContainer> getChildNodesFromList(ArrayList<CrawlerNodeContainer> containers, int id) {
+
         ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
+
         for (CrawlerNodeContainer container : containers) {
+
             if (container.getParent() == id) {
                 nodes.add(container);
 
-
             }
         }
-
-
         return nodes;
     }
 
