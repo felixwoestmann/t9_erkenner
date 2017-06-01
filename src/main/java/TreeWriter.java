@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class TreeWriter {
     private CrawlerTree tree;
+    private int count = 1;
 
     public TreeWriter(CrawlerTree tree) {
         this.tree = tree;
@@ -17,7 +18,8 @@ public class TreeWriter {
 
 
     public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
-       //open print writer
+        numberTree(tree.getRoot());
+        //open print writer
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 
         CrawlerNode root = tree.getRoot();
@@ -30,13 +32,13 @@ public class TreeWriter {
         sb.append(createJSONObjectStringFromSingleNode(root)).append(",");
 
         writer.println(sb.toString());
-        sb=new StringBuilder();
+        sb = new StringBuilder();
         // add other nodes
         for (CrawlerNode crawlerNode : root.getChildren()) {
             sb.append(createJSONArrayStringFromNodes(crawlerNode));
             sb.append(",\n");
             writer.println(sb.toString());
-            sb=new StringBuilder();
+            sb = new StringBuilder();
         }
 
 
@@ -95,5 +97,27 @@ public class TreeWriter {
             nodes.add(node);
         }
         return nodes;
+    }
+
+    /*
+    Number tree so that each child of the root has a consistent room of numbers.
+
+    child 1 id: 2
+        2 - 1336
+    child 2 id: 1337
+        1337 - 2999
+    child 3 id: 3000
+
+
+     */
+    private void numberTree(CrawlerNode node) {
+        node.setId(count++);
+
+        ArrayList<CrawlerNode> children = node.getChildren();
+        if (!children.isEmpty()) {
+            for (CrawlerNode child : children) {
+                numberTree(child);
+            }
+        }
     }
 }

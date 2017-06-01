@@ -114,4 +114,9 @@ public class CrawlerTree {
         return sb.toString();
     }
 
+
+    public   boolean equals(CrawlerTree tree2) {
+        return toString().equals(tree2.toString());
+    }
+
 }

@@ -11,6 +11,7 @@ import utilitiy.FileReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,14 +93,30 @@ public class TreeReader {
         }
 
         // get children from root node
-        ArrayList<CrawlerNodeContainer> rootChildren = CrawlerNodeContainer.getChildNodesFromList(list, rootContainer.getId());
+        ArrayList<CrawlerNodeContainer> rootChildren = getChildNodesFromList(list, rootContainer.getId());
+
+        //split list into one for ech child of root
+        ArrayList<ArrayList<CrawlerNodeContainer>> lists = new ArrayList<>();
+        for (int i = 0; i < rootChildren.size(); i++) {
+            int startId = rootChildren.get(i).getId();
+            int stopId = 0;
+            if (i == rootChildren.size() - 1) {
+                stopId = Integer.MAX_VALUE;
+            } else {
+                stopId = rootChildren.get(i + 1).getId();
+            }
+            ArrayList<CrawlerNodeContainer> partList = getNodesBetweenIds(startId, stopId, list);
+            partList.sort((o1, o2) -> o1.getId() - o2.getId());
+            lists.add(partList);
+        }
+
 
         //create executor service with number of threads = count of processors
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         Future<?>[] threads = new Future<?>[rootChildren.size()];
         for (int i = 0; i < rootChildren.size(); i++) {
             int j = i;
-            threads[i] = executorService.submit(() -> getChilds(list, rootChildren.get(j)));
+            threads[i] = executorService.submit(() -> getChilds(lists.get(j), rootChildren.get(j)));
         }
 
         //wait until all threads are finished
@@ -112,23 +129,56 @@ public class TreeReader {
             e.printStackTrace();
         }
         //put everything back together
-        root.addChildren(CrawlerNodeContainer.containerListToNodeList(rootChildren));
+        root.addChildren(containerListToNodeList(rootChildren));
         return root;
     }
 
     private void getChilds(ArrayList<CrawlerNodeContainer> list, CrawlerNodeContainer container) {
         CrawlerNode node = container.getNode();
-        ArrayList<CrawlerNodeContainer> nodes = CrawlerNodeContainer.getChildNodesFromList(list, container.getId());
+        ArrayList<CrawlerNodeContainer> nodes = getChildNodesFromList(list, container.getId());
 
         if (!nodes.isEmpty()) {
-            node.addChildren(CrawlerNodeContainer.containerListToNodeList(nodes));
+            node.addChildren(containerListToNodeList(nodes));
             for (CrawlerNodeContainer crawlerNodeContainer : nodes) {
                 getChilds(list, crawlerNodeContainer);
             }
         }
     }
 
+    private ArrayList<CrawlerNodeContainer> getNodesBetweenIds(int startId, int stopId, ArrayList<CrawlerNodeContainer> list) {
+        ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
 
+        for (CrawlerNodeContainer crawlerNodeContainer : list) {
+            if (crawlerNodeContainer.getId() >= startId && crawlerNodeContainer.getId() < stopId) {
+                nodes.add(crawlerNodeContainer);
+            }
+        }
+        return nodes;
+    }
+
+    private ArrayList<CrawlerNodeContainer> getChildNodesFromList(ArrayList<CrawlerNodeContainer> containers, int id) {
+        ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
+        for (CrawlerNodeContainer container : containers) {
+            if (container.getParent() == id) {
+                nodes.add(container);
+
+
+            }
+        }
+
+
+        return nodes;
+    }
+
+    private ArrayList<CrawlerNode> containerListToNodeList(ArrayList<CrawlerNodeContainer> list) {
+        ArrayList<CrawlerNode> nodes = new ArrayList<>();
+
+        for (CrawlerNodeContainer container : list) {
+            nodes.add(container.getNode());
+        }
+
+        return nodes;
+    }
 }
 
 

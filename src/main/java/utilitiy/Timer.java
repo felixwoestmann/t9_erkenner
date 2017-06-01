@@ -23,7 +23,7 @@ public class Timer {
 
     public void printTime(TimeUnit unit) {
         validateState("You must stop the timer before printing the time");
-        System.out.print(convertToUnit(unit, stop - start) + "\n");
+        System.out.print(convertToUnit(unit, stop - start) );
     }
 
 
