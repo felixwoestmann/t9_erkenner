@@ -38,19 +38,6 @@ public class Main {
         System.out.println("Persisting finished.");
     }
 
-    private static CrawlerTree loadTree(String path) {
-        CrawlerTree readTree = null;
-        System.out.println("Read persisted tree.");
-        TreeReader reader = new TreeReader();
-        try {
-            readTree = reader.getTreeFromFile(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Aufbau des Baums abgeschlossen");
-        return readTree;
-    }
-
     private static boolean areTreeIdentical(CrawlerTree tree1, CrawlerTree tree2) {
         return tree1.toString().equals(tree2.toString());
     }

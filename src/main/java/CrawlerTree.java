@@ -1,4 +1,5 @@
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -107,11 +108,21 @@ public class CrawlerTree {
         char[] chararray = input.toCharArray();
         StringBuilder sb = new StringBuilder();
         for (char c : chararray) {
-            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c==' ') {
+            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c == ' ') {
                 sb.append(c);
             }
         }
         return sb.toString();
     }
 
+    public static CrawlerTree loadFromFile(String path) {
+        CrawlerTree readTree = null;
+        TreeReader reader = new TreeReader();
+        try {
+            readTree = reader.getTreeFromFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return readTree;
+    }
 }
