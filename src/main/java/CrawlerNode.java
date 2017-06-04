@@ -95,4 +95,14 @@ public class CrawlerNode {
     public int getId() {
         return id;
     }
+
+    public String getTreePathAsString() {
+        StringBuilder res = new StringBuilder();
+        CrawlerNode node = this;
+        while (node.getParent().getData().getChar() != 'X') {
+            res.insert(0, String.valueOf(node.getParent().getData().getChar()));
+            node = node.getParent();
+        }
+        return res.length() == 0 ? "X" : res.toString();
+    }
 }
