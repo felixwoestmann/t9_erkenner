@@ -23,7 +23,7 @@ public class Timer {
 
     public void printTime(TimeUnit unit) {
         validateState("You must stop the timer before printing the time");
-        System.out.print(convertToUnit(unit, stop - start) );
+        System.out.print(convertToUnit(unit, stop - start));
     }
 
 
@@ -54,7 +54,7 @@ public class Timer {
     public long getTime(TimeUnit unit) {
         validateState("You must stop the timer before fetching the time");
 
-        return convertToUnit(unit,stop-start);
+        return convertToUnit(unit, stop - start);
     }
 
     private void validateState(String message) {
@@ -62,7 +62,6 @@ public class Timer {
             throw new IllegalStateException(message);
         }
     }
-
 
 
 }

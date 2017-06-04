@@ -52,7 +52,7 @@ public class ProbabilityCalculator {
         double overallProbability = 1;
 
         for (int i = 0; i <= string.length() - tree.getChunkSize(); i++) {
-            String substring = string.substring(i, i+ tree.getChunkSize());
+            String substring = string.substring(i, i + tree.getChunkSize());
             double prob = probOfStringShorterThanChunkSize(substring);
             overallProbability *= prob;
         }
@@ -65,7 +65,7 @@ public class ProbabilityCalculator {
 
         double overallProbability = 0;
         for (int i = 0; i <= string.length() - tree.getChunkSize(); i++) {
-            String substring = string.substring(i, i+ tree.getChunkSize());
+            String substring = string.substring(i, i + tree.getChunkSize());
             double prob = probOfStringShorterThanChunkSize(substring);
             overallProbability += Math.log(prob);
         }

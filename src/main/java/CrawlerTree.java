@@ -1,4 +1,3 @@
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -126,7 +125,7 @@ public class CrawlerTree {
         return readTree;
     }
 
-    public   boolean equals(CrawlerTree tree2) {
+    public boolean equals(CrawlerTree tree2) {
         return toString().equals(tree2.toString());
     }
 }

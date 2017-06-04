@@ -31,7 +31,7 @@ public class DataContainer {
     }
 
     public void incrementCount() {
-        setCount(getCount()+1);
+        setCount(getCount() + 1);
     }
 
     public String toString() {

@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /**
  * Created by lostincoding on 10.05.17.
  */
@@ -27,7 +25,6 @@ public class CrawlerNodeContainer {
     public CrawlerNode getNode() {
         return node;
     }
-
 
 
 }

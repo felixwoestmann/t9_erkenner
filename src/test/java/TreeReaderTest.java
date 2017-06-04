@@ -1,5 +1,4 @@
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import utility.TimeUnit;
 import utility.Timer;
