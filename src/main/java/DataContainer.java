@@ -2,25 +2,24 @@
  * Created by lostincoding on 09.05.17.
  */
 public class DataContainer {
-    private char data;
+    private char aChar;
     private int count;
 
     public DataContainer(char data) {
-        this.setData(data);
-        this.count=1;
-    }
-    public DataContainer(char data,int count) {
-        this.setData(data);
-        this.count=count;
+        this.setChar(data);
+        this.count = 1;
     }
 
-
-    public char getData() {
-        return data;
+    public DataContainer(char data, int count) {
+        this.setChar(data);
+        this.count = count;
     }
 
-    public void setData(char data) {
-        this.data = data;
+
+    public char getChar() { return aChar; }
+
+    public void setChar(char aChar) {
+        this.aChar = aChar;
     }
 
     public int getCount() {
@@ -36,6 +35,6 @@ public class DataContainer {
     }
 
     public String toString() {
-        return data+":"+count;
+        return aChar + ":" + count;
     }
 }

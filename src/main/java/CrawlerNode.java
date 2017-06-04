@@ -84,7 +84,7 @@ public class CrawlerNode {
 
 
         for (CrawlerNode child : children) {
-            if (child.getData().getData() == c) {
+            if (child.getData().getChar() == c) {
                 return child;
             }
         }

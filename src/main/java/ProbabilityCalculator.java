@@ -65,7 +65,7 @@ public class ProbabilityCalculator {
         //get appearance of char
         double appearanceOfChar = 0;
         for (CrawlerNode crawlerNode : children) {
-            if (crawlerNode.getData().getData() == c) {
+            if (crawlerNode.getData().getChar() == c) {
                 appearanceOfChar = crawlerNode.getData().getCount();
             }
         }
@@ -75,7 +75,7 @@ public class ProbabilityCalculator {
 
     private CrawlerNode getChildWithCharAsData(CrawlerNode node, char c) {
         for (CrawlerNode crawlerNode : node.getChildren()) {
-            if (crawlerNode.getData().getData() == c) {
+            if (crawlerNode.getData().getChar() == c) {
                 return crawlerNode;
             }
         }

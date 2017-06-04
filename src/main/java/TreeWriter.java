@@ -66,7 +66,7 @@ public class TreeWriter {
     private String createJSONObjectStringFromSingleNode(CrawlerNode node) {
         //use numbers instead of strings to save disk space
         JSONObject n = new JSONObject();
-        n.put("1", node.getData().getData() + ""); //char
+        n.put("1", node.getData().getChar() + ""); //char
         n.put("2", node.getData().getCount()); //count
         n.put("3", node.getId()); //id
         CrawlerNode parent = node.getParent();
