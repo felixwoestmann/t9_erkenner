@@ -1,6 +1,6 @@
-import utilitiy.FileReader;
-import utilitiy.TimeUnit;
-import utilitiy.Timer;
+import utility.FileReader;
+import utility.TimeUnit;
+import utility.Timer;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,8 @@
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import utilitiy.TimeUnit;
-import utilitiy.Timer;
+import utility.TimeUnit;
+import utility.Timer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

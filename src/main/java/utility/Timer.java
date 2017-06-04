@@ -1,4 +1,4 @@
-package utilitiy;
+package utility;
 
 /**
  * Created by lostincoding on 31.05.17.
