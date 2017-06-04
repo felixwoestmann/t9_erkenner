@@ -14,5 +14,6 @@ public class ProbCalcWithGeneratedTreeTest {
     public void testGivenStringInWikiFileTree() {
         String s = "In Steinfurt regnet es fast nie";
         System.out.format("%s\n%.3g\n", s, c.probOfString(s));
+        System.out.format("By Log calculation\n%.3g\n", c.probOfStringByLogProduct(s));
     }
 }

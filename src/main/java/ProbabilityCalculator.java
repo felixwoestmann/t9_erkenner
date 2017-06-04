@@ -60,6 +60,19 @@ public class ProbabilityCalculator {
         return overallProbability;
     }
 
+    public double probOfStringByLogProduct(String string) {
+        string = string.toLowerCase();
+
+        double overallProbability = 0;
+        for (int i = 0; i <= string.length() - tree.getChunkSize(); i++) {
+            String substring = string.substring(i, i+ tree.getChunkSize());
+            double prob = probOfStringShorterThanChunkSize(substring);
+            overallProbability += Math.log(prob);
+        }
+
+        return Math.exp(overallProbability);
+    }
+
     public double probOfCharWithDefinedPrefix(String prefix, char c) {
         String complete = prefix + c;
         double completeProb = probOfStringShorterThanChunkSize(complete);
