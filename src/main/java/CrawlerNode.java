@@ -96,6 +96,10 @@ public class CrawlerNode {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getTreePathAsString() {
         StringBuilder res = new StringBuilder();
         CrawlerNode node = this;

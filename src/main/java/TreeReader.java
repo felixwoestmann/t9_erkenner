@@ -6,18 +6,20 @@ import sun.misc.IOUtils;
 
 import javax.xml.crypto.Data;
 import javax.xml.soap.Node;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import utilitiy.FileReader;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by lostincoding on 10.05.17.
  */
 public class TreeReader {
 
-    public TreeReader() {
-
-    }
 
     public CrawlerTree parseJSON(String json) throws ParseException {
 
@@ -44,7 +46,6 @@ public class TreeReader {
 
         return tree;
     }
-
 
 
     private ArrayList<CrawlerNodeContainer> getNodesFromJSONArray(JSONArray array) {
@@ -78,34 +79,98 @@ public class TreeReader {
     private CrawlerNode mapNodes(ArrayList<CrawlerNodeContainer> list) {
 
         CrawlerNode root = null;
-        CrawlerNodeContainer rootContainer=null;
+        CrawlerNodeContainer rootContainer = null;
 
-        for (CrawlerNodeContainer container : list) {
-            if (container.getParent()==-1) {
-                root=container.getNode();
-                rootContainer=container;
+        //get root node an container
+        rootContainer = list.get(0);
+        root = rootContainer.getNode();
+
+        // get children from root node
+        ArrayList<CrawlerNodeContainer> rootChildren = getChildNodesFromList(list, rootContainer.getId());
+
+        //split list into one for each child of root
+        ArrayList<ArrayList<CrawlerNodeContainer>> lists = new ArrayList<>();
+        for (int i = 0; i < rootChildren.size(); i++) {
+            int startId = rootChildren.get(i).getId();
+            int stopId = 0;
+            if (i == rootChildren.size() - 1) {
+                stopId = Integer.MAX_VALUE;
+            } else {
+                stopId = rootChildren.get(i + 1).getId();
             }
+            ArrayList<CrawlerNodeContainer> partList = getNodesBetweenIds(startId, stopId, list);
+            lists.add(partList);
         }
 
 
-        getChilds(list,rootContainer);
+        //create executor service with number of threads = count of processors
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        Future<?>[] threads = new Future<?>[rootChildren.size()];
+        for (int i = 0; i < rootChildren.size(); i++) {
+            int j = i;
+            threads[i] = executorService.submit(() -> getChilds(lists.get(j), rootChildren.get(j)));
+        }
 
+        //wait until all threads are finished
+        try {
+            for (int i = 0; i < threads.length; i++) {
+                threads[i].get();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //put everything back together
+        root.addChildren(containerListToNodeList(rootChildren));
         return root;
     }
 
     private void getChilds(ArrayList<CrawlerNodeContainer> list, CrawlerNodeContainer container) {
-        CrawlerNode node=container.getNode();
-        ArrayList<CrawlerNodeContainer> nodes=CrawlerNodeContainer.getChildNodesFromList(list,container.getId());
+        CrawlerNode node = container.getNode();
+        ArrayList<CrawlerNodeContainer> nodes = getChildNodesFromList(list, container.getId());
 
-        if(!nodes.isEmpty()) {
-            node.addChildren(CrawlerNodeContainer.containerListToNodeList(nodes));
+        if (!nodes.isEmpty()) {
+            node.addChildren(containerListToNodeList(nodes));
             for (CrawlerNodeContainer crawlerNodeContainer : nodes) {
-                getChilds(list,crawlerNodeContainer);
+                getChilds(list, crawlerNodeContainer);
             }
         }
     }
 
+    private ArrayList<CrawlerNodeContainer> getNodesBetweenIds(int startId, int stopId, ArrayList<CrawlerNodeContainer> list) {
+        ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
 
+        for (CrawlerNodeContainer crawlerNodeContainer : list) {
+            if (crawlerNodeContainer.getId() >= startId && crawlerNodeContainer.getId() < stopId) {
+                nodes.add(crawlerNodeContainer);
+            }
+        }
+        return nodes;
+    }
+
+    private ArrayList<CrawlerNodeContainer> getChildNodesFromList(ArrayList<CrawlerNodeContainer> containers, int id) {
+
+        ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
+
+        for (CrawlerNodeContainer container : containers) {
+
+            if (container.getParent() == id) {
+                nodes.add(container);
+
+            }
+        }
+        return nodes;
+    }
+
+    private ArrayList<CrawlerNode> containerListToNodeList(ArrayList<CrawlerNodeContainer> list) {
+        ArrayList<CrawlerNode> nodes = new ArrayList<>();
+
+        for (CrawlerNodeContainer container : list) {
+            nodes.add(container.getNode());
+        }
+
+        return nodes;
+    }
 }
 
 

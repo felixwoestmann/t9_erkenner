@@ -125,4 +125,8 @@ public class CrawlerTree {
         }
         return readTree;
     }
+
+    public   boolean equals(CrawlerTree tree2) {
+        return toString().equals(tree2.toString());
+    }
 }

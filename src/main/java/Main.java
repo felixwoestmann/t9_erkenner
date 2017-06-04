@@ -1,5 +1,4 @@
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -9,16 +8,17 @@ public class Main {
     private static String treeLocationPath = "./tree.json";
 
     public static void main(String args[]) {
-
         CrawlerTree wikipediaTree = new CrawlerTree(5);
-        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
+        WikiDumpReader corpusReader = new WikiDumpReader();
+        corpusReader.processWikiDump(wikipediaTree, "../wikidump");
 
+        persistTree(wikipediaTree, "/home/lostincoding/Schreibtisch/tree_tree.json");
         calculateProbOfWordInTree("Felix", wikipediaTree);
     }
 
     private static void calculateProbOfWordInTree(String searchString, CrawlerTree tree) {
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(tree);
-        double probOfString = probabilityCalculator.probOfStringSmallerThanChunkSize(searchString.toLowerCase());
+        double probOfString = probabilityCalculator.probOfStringShorterThanChunkSize(searchString.toLowerCase());
 
         System.out.format(
             "Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n",
@@ -38,7 +38,4 @@ public class Main {
         System.out.println("Persisting finished.");
     }
 
-    private static boolean areTreeIdentical(CrawlerTree tree1, CrawlerTree tree2) {
-        return tree1.toString().equals(tree2.toString());
-    }
 }
