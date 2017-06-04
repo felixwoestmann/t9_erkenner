@@ -16,8 +16,6 @@ public class ProbabilityCalculator {
     }
 
     public double probOfTwoChars(char one, char two) {
-
-
         CrawlerNode c1node = getChildWithCharAsData(tree.getRoot(), one);
 
         double probOfOne = getProbOfCharOnLevel(tree.getRoot(), one);
@@ -26,7 +24,7 @@ public class ProbabilityCalculator {
         return probOfOne * probOfTwo;
     }
 
-    public double probOfStringSmallerThanChunkSize(String string) {
+    public double probOfStringShorterThanChunkSize(String string) {
         if (string.length() > tree.getChunkSize()) {
             throw new IllegalArgumentException("Length of String is too big");
         }
@@ -45,16 +43,37 @@ public class ProbabilityCalculator {
         return overallProbability;
     }
 
+    public double probOfString(String string) {
+        string = string.toLowerCase();
+        if (string.length() < tree.getChunkSize()) {
+            return probOfStringShorterThanChunkSize(string);
+        }
+
+        double overallProbability = 1;
+
+        for (int i = 0; i <= string.length() - tree.getChunkSize(); i++) {
+            String substring = string.substring(i, i+ tree.getChunkSize());
+            double prob = probOfStringShorterThanChunkSize(substring);
+            overallProbability *= prob;
+        }
+
+        return overallProbability;
+    }
+
     public double probOfCharWithDefinedPrefix(String prefix, char c) {
         String complete = prefix + c;
-        double completeProb = probOfStringSmallerThanChunkSize(complete);
-        double prefixProb = probOfStringSmallerThanChunkSize(prefix);
+        double completeProb = probOfStringShorterThanChunkSize(complete);
+        double prefixProb = probOfStringShorterThanChunkSize(prefix);
         return completeProb / prefixProb;
     }
 
 
     private double getProbOfCharOnLevel(CrawlerNode node, char c) {
         double levelcount = 0;
+        if (node == null) {
+            //@ToDo: this should return the smallest value for a probability that is possible!
+            return 0.0;
+        }
         ArrayList<CrawlerNode> children = node.getChildren();
         if (children == null) {
             throw new NullPointerException("node has no childs");
