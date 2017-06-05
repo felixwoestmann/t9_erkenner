@@ -44,15 +44,13 @@ public class TreeReaderTest {
     }
 
 
-
     @Test
     public void testAccuracyOfLoadingTree() throws IOException {
 
-        String path = "/home/lostincoding/Schreibtisch/test.json";
+        String path = "test.json";
 
         CrawlerTree wikipediaTree = new CrawlerTree(3);
-        WikiDumpReader corpusReader = new WikiDumpReader();
-        corpusReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump/");
 
         wikipediaTree.printTree();
         TreeWriter writer = new TreeWriter(wikipediaTree);
@@ -72,12 +70,11 @@ public class TreeReaderTest {
     public void compareReadToProcessSpeed() throws IOException {
         Timer processTimer = new Timer();
         Timer readTimer = new Timer();
-        String path = "/home/lostincoding/Schreibtisch/test.json";
+        String path = "test.json";
         int chunksize = 5;
         CrawlerTree wikipediaTree = new CrawlerTree(chunksize);
-        WikiDumpReader corpusReader = new WikiDumpReader();
         processTimer.start();
-        corpusReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
         processTimer.stop();
         System.out.println("Persist Tree on HardDrive. Directory: " + path);
         TreeWriter writer = new TreeWriter(wikipediaTree);
@@ -93,13 +90,8 @@ public class TreeReaderTest {
         CrawlerTree tree = reader.getTreeFromFile(path);
         readTimer.stop();
 
-        System.out.print("Process String took ");
-        processTimer.printTime(TimeUnit.SECONDS);
-        System.out.print(" seconds for chunksize " + chunksize + "\n");
-
-        System.out.print("Read File took ");
-        readTimer.printTime(TimeUnit.SECONDS);
-        System.out.print(" seconds for chunksize " + chunksize + "\n");
+        System.out.format("Read File took %d seconds for chunksize %d\n", readTimer.getTime(TimeUnit.SECONDS), chunksize);
+        System.out.format("Process String took %d seconds for chunksize %d\n", processTimer.getTime(TimeUnit.SECONDS), chunksize);
 
         long processTime = processTimer.getTime(TimeUnit.SECONDS);
         long readTime = readTimer.getTime(TimeUnit.SECONDS);

@@ -9,10 +9,9 @@ public class Main {
 
     public static void main(String args[]) {
         CrawlerTree wikipediaTree = new CrawlerTree(5);
-        WikiDumpReader corpusReader = new WikiDumpReader();
-        corpusReader.processWikiDump(wikipediaTree, "../wikidump");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
 
-        persistTree(wikipediaTree, "/home/lostincoding/Schreibtisch/tree_tree.json");
+        persistTree(wikipediaTree, treeLocationPath);
         calculateProbOfWordInTree("Felix", wikipediaTree);
     }
 
@@ -21,7 +20,7 @@ public class Main {
         double probOfString = probabilityCalculator.probOfStringShorterThanChunkSize(searchString.toLowerCase());
 
         System.out.format(
-            "Die Wahrscheinlichkeit für %s in der deutschen Wikipedia ist %5f.\n",
+            "Die Wahrscheinlichkeit für %s im Korpus ist %5f.\n",
             searchString,
             probOfString
         );
