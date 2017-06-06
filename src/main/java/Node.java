@@ -51,4 +51,27 @@ public class Node<T> {
     public boolean isLeaf() {
         return children.isEmpty();
     }
+
+
+    public void print() {
+        System.out.println(getStringRepresentation());
+    }
+
+    public String getStringRepresentation() {
+        StringBuilder sb = new StringBuilder();
+        getStringRepresentation("", sb, true);
+        return sb.toString();
+    }
+
+
+    private void getStringRepresentation(String prefix, StringBuilder sb, boolean isTail) {
+        sb.append(prefix + (isTail ? "└── " : "├── ") + data.toString()).append("\n");
+        for (int i = 0; i < children.size() - 1; i++) {
+            ((Node<T>) children.get(i)).getStringRepresentation(prefix + (isTail ? "    " : "│   "), sb, false);
+        }
+        if (children.size() > 0) {
+            ((Node<T>) children.get(children.size() - 1))
+                    .getStringRepresentation(prefix + (isTail ? "    " : "│   "), sb, true);
+        }
+    }
 }

@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -7,12 +8,24 @@ import java.io.UnsupportedEncodingException;
 public class Main {
     private static String treeLocationPath = "./tree.json";
 
-    public static void main(String args[]) {
-        CrawlerTree wikipediaTree = new CrawlerTree(5);
-        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
+    public static void main(String args[]) throws IOException {
+//        CrawlerTree wikipediaTree = new CrawlerTree(5);
+//        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
+//
+//        persistTree(wikipediaTree, treeLocationPath);
+//        calculateProbOfWordInTree("Felix", wikipediaTree);
 
-        persistTree(wikipediaTree, treeLocationPath);
-        calculateProbOfWordInTree("Felix", wikipediaTree);
+        TreeReader reader = new TreeReader();
+        CrawlerTree parseTree = reader.getTreeFromFile("tree_3.json");
+        ProbabilityCalculator c = new ProbabilityCalculator(parseTree);
+
+        T9_Tree inputTree = new T9_Tree();
+        String input = "42556";
+
+        for (int i = 0; i < input.length(); i++) {
+            System.out.println("i: " + (i+1));
+            inputTree.processButton(input.charAt(i));
+        }
     }
 
     private static void calculateProbOfWordInTree(String searchString, CrawlerTree tree) {
