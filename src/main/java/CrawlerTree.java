@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lostincoding on 09.05.17.
@@ -10,7 +11,7 @@ public class CrawlerTree {
     private CrawlerNode root = null;
 
     public CrawlerTree(int chunkSize) {
-        this.root = new CrawlerNode(new DataContainer('X'));
+        this.root = new CrawlerNode<DataContainer>(new DataContainer('X'));
 
         this.chunkSize = chunkSize;
     }
@@ -35,34 +36,32 @@ public class CrawlerTree {
         CrawlerNode previous = root;
 
         for (int i = 0; i < chunk.length; i++) {
-            root.getData().incrementCount();
+            ((DataContainer) root.getData()).incrementCount();
             CrawlerNode workingon = previous.getChild(chunk[i]);
 
             if (workingon == null) {
-                CrawlerNode tmp = new CrawlerNode(new DataContainer(chunk[i]));
+                CrawlerNode tmp = new CrawlerNode<DataContainer>(new DataContainer(chunk[i]));
                 previous.addChild(tmp);
                 previous = tmp;
             } else {
-                workingon.getData().incrementCount();
+                ((DataContainer) workingon.getData()).incrementCount();
                 previous = workingon;
             }
         }
     }
 
 
-    private ArrayList<CrawlerNode> getLeafs(CrawlerNode start) {
+    private ArrayList<CrawlerNode> getLeafs(CrawlerNode<DataContainer> start) {
         ArrayList<CrawlerNode> leafs = new ArrayList<CrawlerNode>();
 
         if (start.isLeaf()) {
             leafs.add(start);
             return leafs;
         } else {
-            for (CrawlerNode n : start.getChildren()) {
+            for (CrawlerNode n : start.getChildrenAsArrayList()) {
                 leafs.addAll(getLeafs(n));
             }
         }
-
-
         return leafs;
     }
 
