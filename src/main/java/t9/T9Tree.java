@@ -1,21 +1,24 @@
 package t9;
 
 import crawler.ProbabilityCalculator;
+import general.Node;
 
 import java.util.ArrayList;
 
 public class T9Tree {
     private ArrayList<Node<T9DataContainer>> leafs = null;
     private ProbabilityCalculator probCalc=null;
+    private int historySize;
 
     private Node<T9DataContainer> root = null;
     public static int count = 0;
 
-    public T9Tree(ProbabilityCalculator probCalc) {
+    public T9Tree(ProbabilityCalculator probCalc,int historySize) {
         root = new Node<>(new T9DataContainer(-1, "root"));
         leafs = getLeafs(root);
         count = 0;
         this.probCalc=probCalc;
+        this.historySize=historySize;
     }
 
     public void processButton(char button) {

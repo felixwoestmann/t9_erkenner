@@ -27,7 +27,7 @@ public class Main {
         CrawlerTree parseTree = reader.getTreeFromFile("tree_3.json");
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
-        T9Tree inputTree = new T9Tree(probabilityCalculator);
+        T9Tree inputTree = new T9Tree(probabilityCalculator,2);
         String input = "42556";
 
         for (int i = 0; i < input.length(); i++) {

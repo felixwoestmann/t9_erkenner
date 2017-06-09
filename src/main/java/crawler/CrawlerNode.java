@@ -1,6 +1,6 @@
 package crawler;
 
-import t9.Node;
+import general.Node;
 
 import java.util.ArrayList;
 
