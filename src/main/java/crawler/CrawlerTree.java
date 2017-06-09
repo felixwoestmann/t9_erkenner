@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class CrawlerTree {
 
     private int chunkSize;
-    private CrawlerNode root = null;
+    private CrawlerNode<DataContainer> root = null;
 
     public CrawlerTree(int chunkSize) {
         this.root = new CrawlerNode<>(new DataContainer('X'));
@@ -17,7 +17,7 @@ public class CrawlerTree {
         this.chunkSize = chunkSize;
     }
 
-    public CrawlerTree(int chunkSize, CrawlerNode root) {
+    public CrawlerTree(int chunkSize, CrawlerNode<DataContainer> root) {
         this.root = root;
 
         this.chunkSize = chunkSize;
@@ -34,14 +34,14 @@ public class CrawlerTree {
     private void processChunk(char[] chunk) {
 
 
-        CrawlerNode previous = root;
+        CrawlerNode<DataContainer> previous = root;
 
         for (int i = 0; i < chunk.length; i++) {
-            ((DataContainer) root.getData()).incrementCount();
-            CrawlerNode workingon = previous.getChild(chunk[i]);
+            ( root.getData()).incrementCount();
+            CrawlerNode<DataContainer> workingon = previous.getChild(chunk[i]);
 
             if (workingon == null) {
-                CrawlerNode tmp = new CrawlerNode<>(new DataContainer(chunk[i]));
+                CrawlerNode<DataContainer> tmp = new CrawlerNode<>(new DataContainer(chunk[i]));
                 previous.addChild(tmp);
                 previous = tmp;
             } else {
@@ -52,14 +52,14 @@ public class CrawlerTree {
     }
 
 
-    private ArrayList<CrawlerNode> getLeafs(CrawlerNode<DataContainer> start) {
-        ArrayList<CrawlerNode> leafs = new ArrayList<CrawlerNode>();
+    private ArrayList<CrawlerNode<DataContainer>> getLeafs(CrawlerNode<DataContainer> start) {
+        ArrayList<CrawlerNode<DataContainer>> leafs = new ArrayList<>();
 
         if (start.isLeaf()) {
             leafs.add(start);
             return leafs;
         } else {
-            for (CrawlerNode n : start.getChildrenAsArrayList()) {
+            for (CrawlerNode<DataContainer> n : start.getChildrenAsArrayList()) {
                 leafs.addAll(getLeafs(n));
             }
         }
@@ -67,7 +67,7 @@ public class CrawlerTree {
     }
 
 
-    public CrawlerNode getRoot() {
+    public CrawlerNode<DataContainer> getRoot() {
         return root;
     }
 

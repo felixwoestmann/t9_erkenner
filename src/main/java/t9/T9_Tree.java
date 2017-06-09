@@ -1,17 +1,21 @@
 package t9;
 
+import crawler.ProbabilityCalculator;
+
 import java.util.ArrayList;
 
 public class T9_Tree {
     private ArrayList<Node<String>> leafs = null;
+    private ProbabilityCalculator probCalc=null;
 
     private Node<String> root = null;
     public static int count = 0;
 
-    public T9_Tree() {
+    public T9_Tree(ProbabilityCalculator probCalc) {
         root = new Node<String>("root");
         leafs = getLeafs(root);
         count = 0;
+        this.probCalc=probCalc;
     }
 
     public void processButton(char button) {
@@ -29,7 +33,12 @@ public class T9_Tree {
             }
         }
 
-      //  updateLeafs();
+        updateLeafs();
+
+    }
+
+    private void updateProbabilitys() {
+
     }
 
     private ArrayList<Node<String>> getLeafs(Node<String> start) {
