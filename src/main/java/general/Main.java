@@ -1,8 +1,10 @@
+package general;
+
 import crawler.CrawlerTree;
 import crawler.ProbabilityCalculator;
 import crawler.TreeReader;
 import crawler.TreeWriter;
-import t9.T9_Tree;
+import t9.T9Tree;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class Main {
         CrawlerTree parseTree = reader.getTreeFromFile("tree_3.json");
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
-        T9_Tree inputTree = new T9_Tree(probabilityCalculator);
+        T9Tree inputTree = new T9Tree(probabilityCalculator);
         String input = "42556";
 
         for (int i = 0; i < input.length(); i++) {
