@@ -37,7 +37,7 @@ public class CrawlerTree {
         CrawlerNode<DataContainer> previous = root;
 
         for (int i = 0; i < chunk.length; i++) {
-            ( root.getData()).incrementCount();
+            root.getData().incrementCount();
             CrawlerNode<DataContainer> workingon = previous.getChild(chunk[i]);
 
             if (workingon == null) {

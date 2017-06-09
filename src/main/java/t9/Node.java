@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Node<T> {
     protected T data = null;
-    protected List<Node> children = new ArrayList<>();
-    protected Node parent = null;
+    protected List<Node<T>> children = new ArrayList<>();
+    protected Node<T> parent = null;
 
     public Node(T data) {
         this.data = data;
     }
 
-    public void addChild(Node child) {
+    public void addChild(Node<T> child) {
         child.setParent(this);
         this.children.add(child);
     }
@@ -23,14 +23,14 @@ public class Node<T> {
         children.add(newChild);
     }
 
-    public void addChildren(List<Node> children) {
-        for (Node t : children) {
+    public void addChildren(List<Node<T>> children) {
+        for (Node<T> t : children) {
             t.setParent(this);
         }
         this.children.addAll(children);
     }
 
-    public List<Node> getChildren() {
+    public List<Node<T>> getChildren() {
         return children;
     }
 
@@ -42,7 +42,7 @@ public class Node<T> {
         this.data = data;
     }
 
-    private void setParent(Node parent) {
+    private void setParent(Node<T> parent) {
         this.parent = parent;
     }
 
@@ -67,7 +67,7 @@ public class Node<T> {
 
 
     private void getStringRepresentation(String prefix, StringBuilder sb, boolean isTail) {
-        sb.append(prefix + (isTail ? "└── " : "├── ") + data.toString()).append("\n");
+        sb.append(prefix).append(isTail ? "└── " : "├── ").append(data.toString()).append("\n");
         for (int i = 0; i < children.size() - 1; i++) {
             ((Node<T>) children.get(i)).getStringRepresentation(prefix + (isTail ? "    " : "│   "), sb, false);
         }

@@ -45,7 +45,7 @@ public class CrawlerNode<T> extends Node<T> {
         }
     }
 
-    public CrawlerNode getChild(char c) {
+    public CrawlerNode<T> getChild(char c) {
         for (Node child : children) {
             if (((DataContainer) child.getData()).getChar() == c) {
                 return (CrawlerNode) child;
