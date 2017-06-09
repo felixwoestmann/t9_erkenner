@@ -1,19 +1,18 @@
 package t9;
 
 import crawler.ProbabilityCalculator;
-import general.Node;
 
 import java.util.ArrayList;
 
 public class T9Tree {
-    private ArrayList<Node<String>> leafs = null;
+    private ArrayList<Node<T9DataContainer>> leafs = null;
     private ProbabilityCalculator probCalc=null;
 
-    private Node<String> root = null;
+    private Node<T9DataContainer> root = null;
     public static int count = 0;
 
     public T9Tree(ProbabilityCalculator probCalc) {
-        root = new Node<String>("root");
+        root = new Node<>(new T9DataContainer(-1, "root"));
         leafs = getLeafs(root);
         count = 0;
         this.probCalc=probCalc;
@@ -28,9 +27,9 @@ public class T9Tree {
             e.printStackTrace();
         }
 
-        for (Node<String> n : leafs) {
+        for (Node<T9DataContainer> n : leafs) {
             for (String s : list) {
-                n.addChild(s);
+                n.addChild(new T9DataContainer(1,s));
             }
         }
 
@@ -42,14 +41,14 @@ public class T9Tree {
 
     }
 
-    private ArrayList<Node<String>> getLeafs(Node<String> start) {
-        ArrayList<Node<String>> leafs = new ArrayList<>();
+    private ArrayList<Node<T9DataContainer>> getLeafs(Node<T9DataContainer> start) {
+        ArrayList<Node<T9DataContainer>> leafs = new ArrayList<>();
 
         if (start.isLeaf()) {
             leafs.add(start);
             return leafs;
         } else {
-            for (Node<String> n : start.getChildren()) {
+            for (Node<T9DataContainer> n : start.getChildren()) {
                 leafs.addAll(getLeafs(n));
             }
         }
@@ -58,10 +57,10 @@ public class T9Tree {
     }
 
     private void updateLeafs() {
-        ArrayList<Node<String>> tmplist = new ArrayList<>();
+        ArrayList<Node<T9DataContainer>> tmplist = new ArrayList<>();
 
         count += leafs.size();
-        for (Node<String> n : leafs) {
+        for (Node<T9DataContainer> n : leafs) {
             tmplist.addAll(getLeafs(n));
         }
 
@@ -69,12 +68,12 @@ public class T9Tree {
     }
 
 
-    public Node<String> getRoot() {
+    public Node<T9DataContainer> getRoot() {
         return root;
     }
 
 
-    public ArrayList<Node<String>> getLeafs() {
+    public ArrayList<Node<T9DataContainer>> getLeafs() {
         return leafs;
     }
 
