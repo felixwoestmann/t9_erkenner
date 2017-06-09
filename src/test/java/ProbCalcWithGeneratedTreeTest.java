@@ -1,3 +1,5 @@
+import crawler.CrawlerTree;
+import crawler.ProbabilityCalculator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

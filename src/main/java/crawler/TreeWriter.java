@@ -1,3 +1,7 @@
+package crawler;
+
+import crawler.CrawlerNode;
+import crawler.CrawlerTree;
 import org.json.simple.JSONObject;
 
 import java.io.FileNotFoundException;

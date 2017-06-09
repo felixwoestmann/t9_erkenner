@@ -1,3 +1,9 @@
+import crawler.CrawlerTree;
+import crawler.ProbabilityCalculator;
+import crawler.TreeReader;
+import crawler.TreeWriter;
+import t9.T9_Tree;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,8 +15,8 @@ public class Main {
     private static String treeLocationPath = "./tree.json";
 
     public static void main(String args[]) throws IOException {
-//        CrawlerTree wikipediaTree = new CrawlerTree(5);
-//        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
+//        crawler.CrawlerTree wikipediaTree = new crawler.CrawlerTree(5);
+//        crawler.WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump");
 //
 //        persistTree(wikipediaTree, treeLocationPath);
 //        calculateProbOfWordInTree("Felix", wikipediaTree);

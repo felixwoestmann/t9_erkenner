@@ -1,3 +1,5 @@
+package crawler;
+
 /**
  * Created by lostincoding on 10.05.17.
  */

@@ -1,3 +1,9 @@
+package crawler;
+
+import crawler.CrawlerNode;
+import crawler.CrawlerTree;
+import crawler.DataContainer;
+
 import java.util.ArrayList;
 
 /**

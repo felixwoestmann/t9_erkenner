@@ -1,5 +1,8 @@
+package crawler;
+
+import t9.Node;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class CrawlerNode<T> extends Node<T> {
     private int id;

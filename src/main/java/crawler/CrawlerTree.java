@@ -1,6 +1,7 @@
+package crawler;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by lostincoding on 09.05.17.
@@ -11,7 +12,7 @@ public class CrawlerTree {
     private CrawlerNode root = null;
 
     public CrawlerTree(int chunkSize) {
-        this.root = new CrawlerNode<DataContainer>(new DataContainer('X'));
+        this.root = new CrawlerNode<>(new DataContainer('X'));
 
         this.chunkSize = chunkSize;
     }
@@ -40,7 +41,7 @@ public class CrawlerTree {
             CrawlerNode workingon = previous.getChild(chunk[i]);
 
             if (workingon == null) {
-                CrawlerNode tmp = new CrawlerNode<DataContainer>(new DataContainer(chunk[i]));
+                CrawlerNode tmp = new CrawlerNode<>(new DataContainer(chunk[i]));
                 previous.addChild(tmp);
                 previous = tmp;
             } else {

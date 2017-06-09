@@ -1,3 +1,5 @@
+package t9;
+
 import java.util.ArrayList;
 
 public class T9_Tree {
@@ -27,7 +29,7 @@ public class T9_Tree {
             }
         }
 
-        updateLeafs();
+      //  updateLeafs();
     }
 
     private ArrayList<Node<String>> getLeafs(Node<String> start) {

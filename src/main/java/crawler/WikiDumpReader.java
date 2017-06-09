@@ -1,3 +1,6 @@
+package crawler;
+
+import crawler.CrawlerTree;
 import utility.FileReader;
 import utility.TimeUnit;
 import utility.Timer;

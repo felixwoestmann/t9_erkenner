@@ -1,3 +1,7 @@
+import crawler.CrawlerTree;
+import crawler.TreeReader;
+import crawler.TreeWriter;
+import crawler.WikiDumpReader;
 import org.junit.Assert;
 import org.junit.Test;
 import utility.TimeUnit;
