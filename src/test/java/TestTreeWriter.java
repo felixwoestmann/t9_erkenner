@@ -19,16 +19,25 @@ public class TestTreeWriter {
 
     @Test
     public void testWriteToFile() throws IOException {
-        String persistpath = "/home/lostincoding/Schreibtisch/tree_test.json";
-        int chunksize=5;
 
-        CrawlerTree wikipediaTree = new CrawlerTree(chunksize);
+
+        CrawlerTree wikipediaTree = new CrawlerTree(3);
         WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
 
         TreeWriter writer = new TreeWriter(wikipediaTree);
-        writer.writeToFile(persistpath);
+        writer.writeToFile("./tree_3.json");
 
-        TreeReader reader = new TreeReader();
+        wikipediaTree=new CrawlerTree(4);
+        WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
+        writer=new TreeWriter(wikipediaTree);
+        writer.writeToFile("./tree_4.json");
+
+        wikipediaTree=new CrawlerTree(5);
+        WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
+        writer=new TreeWriter(wikipediaTree);
+        writer.writeToFile("./tree_5.json");
+
+/*        TreeReader reader = new TreeReader();
 
         Timer timer = new Timer();
         timer.start();
@@ -36,6 +45,6 @@ public class TestTreeWriter {
         timer.stop();
 
         timer.printTimeWithMessage("Parsing tree with chunksize "+chunksize+" took seconds", TimeUnit.SECONDS);
-        Assert.assertTrue(readTree.equals(wikipediaTree));
+        Assert.assertTrue(readTree.equals(wikipediaTree));*/
     }
 }
