@@ -1,8 +1,5 @@
 package crawler;
 
-import crawler.CrawlerNode;
-import crawler.CrawlerNodeContainer;
-import crawler.CrawlerTree;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,22 +16,9 @@ import java.util.concurrent.Future;
  * Created by lostincoding on 10.05.17.
  */
 public class TreeReader {
-
-
-    public CrawlerTree parseJSON(String json) throws ParseException {
-
-        JSONParser parser = new JSONParser();
-        JSONObject jtree = (JSONObject) parser.parse(json);
-        JSONArray nodes = (JSONArray) jtree.get("nodes");
-
-        CrawlerNode root = mapNodes(getNodesFromJSONArray(nodes));
-
-        int chunksize = ((Long) jtree.get("chunksize")).intValue();
-        CrawlerTree tree = new CrawlerTree(chunksize, root);
-
-        return tree;
-    }
-
+    /*
+    Returns a CrawlerTree from a valid JSON File
+     */
     public CrawlerTree getTreeFromFile(String path) throws IOException {
         String json = FileReader.readFile(path);
         CrawlerTree tree = null;
@@ -47,7 +31,24 @@ public class TreeReader {
         return tree;
     }
 
+    /*
+    Returns a CrawlerTree from a valid JSON String
+     */
+    private CrawlerTree parseJSON(String json) throws ParseException {
+        //load everything in JSON Objects
+        JSONParser parser = new JSONParser();
+        JSONObject jtree = (JSONObject) parser.parse(json);
+        JSONArray nodes = (JSONArray) jtree.get("nodes");
+        int chunksize = ((Long) jtree.get("chunksize")).intValue();
 
+        CrawlerNode root = mapNodes(getNodesFromJSONArray(nodes));
+        CrawlerTree tree = new CrawlerTree(chunksize, root);
+
+        return tree;
+    }
+    /*
+    Takes a JSON Array of Nodes and returns a List of NodeContainers
+     */
     private ArrayList<CrawlerNodeContainer> getNodesFromJSONArray(JSONArray array) {
         ArrayList<CrawlerNodeContainer> container = new ArrayList<>();
 
@@ -62,6 +63,7 @@ public class TreeReader {
             int parent;
             Object todecide = jo.get("4"); //parent
 
+            // parent id can be -1 which is interpreted as a string
             if (todecide instanceof String) {
                 parent = Integer.parseInt((String) todecide);
             } else {
@@ -75,9 +77,11 @@ public class TreeReader {
 
         return container;
     }
-
+    /*
+    Takes a list of node containers and tries to stitch them together.
+    Returns the root node of the newly formed tree
+     */
     private CrawlerNode mapNodes(ArrayList<CrawlerNodeContainer> list) {
-
         CrawlerNode root = null;
         CrawlerNodeContainer rootContainer = null;
 
@@ -86,7 +90,7 @@ public class TreeReader {
         root = rootContainer.getNode();
 
         // get children from root node
-        ArrayList<CrawlerNodeContainer> rootChildren = getChildNodesFromList(list, rootContainer.getId());
+        ArrayList<CrawlerNodeContainer> rootChildren = getChildrenNodesFromList(list, rootContainer.getId());
 
         //split list into one for each child of root
         ArrayList<ArrayList<CrawlerNodeContainer>> lists = new ArrayList<>();
@@ -108,34 +112,36 @@ public class TreeReader {
         Future<?>[] threads = new Future<?>[rootChildren.size()];
         for (int i = 0; i < rootChildren.size(); i++) {
             int j = i;
-            threads[i] = executorService.submit(() -> getChilds(lists.get(j), rootChildren.get(j)));
+            threads[i] = executorService.submit(() -> getChildren(lists.get(j), rootChildren.get(j)));
         }
 
         //wait until all threads are finished
-        try {
-            for (int i = 0; i < threads.length; i++) {
-                threads[i].get();
-            }
+        executorService.shutdown();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //put everything back together
+        //stitch everything back together
         root.addChildren(containerListToNodeList(rootChildren));
+
         return root;
     }
 
-    private void getChilds(ArrayList<CrawlerNodeContainer> list, CrawlerNodeContainer container) {
+    /**
+     * searches in list for children of the node in parameter container
+     *
+     * @param container The Container of the node the
+     * @param list A list of NodeContainers
+     */
+    private void getChildren(ArrayList<CrawlerNodeContainer> list, CrawlerNodeContainer container) {
         CrawlerNode node = container.getNode();
-        ArrayList<CrawlerNodeContainer> nodes = getChildNodesFromList(list, container.getId());
+        ArrayList<CrawlerNodeContainer> nodes = getChildrenNodesFromList(list, container.getId());
 
         if (!nodes.isEmpty()) {
             node.addChildren(containerListToNodeList(nodes));
             for (CrawlerNodeContainer crawlerNodeContainer : nodes) {
-                getChilds(list, crawlerNodeContainer);
+                getChildren(list, crawlerNodeContainer);
             }
         }
     }
+
 
     private ArrayList<CrawlerNodeContainer> getNodesBetweenIds(int startId, int stopId, ArrayList<CrawlerNodeContainer> list) {
         ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
@@ -148,7 +154,7 @@ public class TreeReader {
         return nodes;
     }
 
-    private ArrayList<CrawlerNodeContainer> getChildNodesFromList(ArrayList<CrawlerNodeContainer> containers, int id) {
+    private ArrayList<CrawlerNodeContainer> getChildrenNodesFromList(ArrayList<CrawlerNodeContainer> containers, int id) {
 
         ArrayList<CrawlerNodeContainer> nodes = new ArrayList<>();
 
@@ -162,6 +168,9 @@ public class TreeReader {
         return nodes;
     }
 
+    /*
+    Converts a list of container to a list of nodes by extractng the node from every container
+     */
     private ArrayList<CrawlerNode> containerListToNodeList(ArrayList<CrawlerNodeContainer> list) {
         ArrayList<CrawlerNode> nodes = new ArrayList<>();
 

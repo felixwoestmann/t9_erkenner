@@ -1,20 +1,20 @@
 package t9;
 
 import crawler.ProbabilityCalculator;
-import general.Node;
+import general.T9Node;
 
 import java.util.ArrayList;
 
 public class T9Tree {
-    private ArrayList<Node<T9DataContainer>> leafs = null;
+    private ArrayList<T9Node<T9DataContainer>> leafs = null;
     private ProbabilityCalculator probCalc = null;
     private int historySize;
 
-    private Node<T9DataContainer> root = null;
+    private T9Node<T9DataContainer> root = null;
     private static int count = 0;
 
     public T9Tree(ProbabilityCalculator probCalc, int historySize) {
-        root = new Node<>(new T9DataContainer(-1, "root"));
+        root = new T9Node<>(new T9DataContainer(-1, "root"));
         leafs = getLeafs(root);
         count = 0;
         this.probCalc = probCalc;
@@ -30,19 +30,19 @@ public class T9Tree {
             e.printStackTrace();
         }
 
-        for (Node<T9DataContainer> n : leafs) {
+        for (T9Node<T9DataContainer> n : leafs) {
             for (String s : list) {
                 n.addChild(new T9DataContainer(1, s));
             }
         }
 
         updateLeafs();
-        for (Node<T9DataContainer> leaf : leafs) {
+        for (T9Node<T9DataContainer> leaf : leafs) {
             updateProbability(leaf);
         }
     }
 
-    private void updateProbability(Node<T9DataContainer> leaf) {
+    private void updateProbability(T9Node<T9DataContainer> leaf) {
         double probability ;
         if (leaf.getParent() == root) {
             probability = probCalc.probOfChar(leaf.getData().getAchar().charAt(0));
@@ -55,15 +55,15 @@ public class T9Tree {
 
     }
 
-    private ArrayList<Node<T9DataContainer>> getLeafs(Node<T9DataContainer> start) {
-        ArrayList<Node<T9DataContainer>> leafs = new ArrayList<>();
+    private ArrayList<T9Node<T9DataContainer>> getLeafs(T9Node<T9DataContainer> start) {
+        ArrayList<T9Node<T9DataContainer>> leafs = new ArrayList<>();
 
         if (start.isLeaf()) {
             leafs.add(start);
             return leafs;
         } else {
 
-            for (Node<T9DataContainer> n : start.getChildren()) {
+            for (T9Node<T9DataContainer> n : start.getChildren()) {
                 leafs.addAll(getLeafs(n));
             }
         }
@@ -72,10 +72,10 @@ public class T9Tree {
     }
 
     private void updateLeafs() {
-        ArrayList<Node<T9DataContainer>> tmplist = new ArrayList<>();
+        ArrayList<T9Node<T9DataContainer>> tmplist = new ArrayList<>();
 
         count += leafs.size();
-        for (Node<T9DataContainer> n : leafs) {
+        for (T9Node<T9DataContainer> n : leafs) {
             tmplist.addAll(getLeafs(n));
         }
 
@@ -83,9 +83,9 @@ public class T9Tree {
     }
 
 
-    private String getHistoryOfNode(Node<T9DataContainer> node) {
+    private String getHistoryOfNode(T9Node<T9DataContainer> node) {
         StringBuilder history = new StringBuilder();
-        Node<T9DataContainer> actnode = node;
+        T9Node<T9DataContainer> actnode = node;
         for (int i = historySize; i > 0; i--) {
             history.append(actnode.getData().getAchar());
             actnode = actnode.getParent();

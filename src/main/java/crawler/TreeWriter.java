@@ -26,7 +26,7 @@ public class TreeWriter {
         //open print writer
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 
-        CrawlerNode<DataContainer> root = tree.getRoot();
+        CrawlerNode root = tree.getRoot();
         //print begin of json with tree data
         StringBuilder sb = new StringBuilder();
         sb.append("{\"nodes\":[");
@@ -38,7 +38,7 @@ public class TreeWriter {
         writer.println(sb.toString());
         sb = new StringBuilder();
         // add other nodes
-        for (CrawlerNode<DataContainer> crawlerNode : root.getChildrenAsArrayList()) {
+        for (CrawlerNode crawlerNode : root.getChildren()) {
             sb.append(createJSONArrayStringFromNodes(crawlerNode));
             sb.append(",\n");
             writer.println(sb.toString());
@@ -69,16 +69,16 @@ public class TreeWriter {
     }
 
 
-    private String createJSONObjectStringFromSingleNode(CrawlerNode<DataContainer> node) {
+    private String createJSONObjectStringFromSingleNode(CrawlerNode node) {
         //use numbers instead of strings to save disk space
         JSONObject n = new JSONObject();
         n.put("1", node.getData().getChar() + ""); //char
         n.put("2", node.getData().getCount()); //count
         n.put("3", node.getId()); //id
-        CrawlerNode<DataContainer> parent = ((CrawlerNode<DataContainer>) node.getParent());
+        CrawlerNode parent = node.getParent();
 
         if (parent != null) {
-            n.put("4", ((CrawlerNode<DataContainer>) node.getParent()).getId()); //parent
+            n.put("4", node.getParent().getId()); //parent
         } else {
             n.put("4", "-1"); //parent
         }
@@ -93,7 +93,7 @@ public class TreeWriter {
 
         nodes.add(node);
 
-        if ((children = node.getChildrenAsArrayList()) != null) {
+        if ((children = node.getChildren()) != null) {
             for (CrawlerNode n : children) {
                 nodes.addAll(getListOfNodes(n));
             }
@@ -117,7 +117,7 @@ public class TreeWriter {
     private void numberTree(CrawlerNode node) {
         node.setId(count++);
 
-        ArrayList<CrawlerNode> children = node.getChildrenAsArrayList();
+        ArrayList<CrawlerNode> children = node.getChildren();
         if (!children.isEmpty()) {
             for (CrawlerNode child : children) {
                 numberTree(child);

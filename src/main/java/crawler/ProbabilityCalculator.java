@@ -22,7 +22,7 @@ public class ProbabilityCalculator {
     }
 
     public double probOfTwoChars(char one, char two) {
-        CrawlerNode<DataContainer> c1node = getChildWithCharAsData(tree.getRoot(), one);
+        CrawlerNode c1node = getChildWithCharAsData(tree.getRoot(), one);
 
         double probOfOne = getProbOfCharOnLevel(tree.getRoot(), one);
         double probOfTwo = getProbOfCharOnLevel(c1node, two);
@@ -39,7 +39,7 @@ public class ProbabilityCalculator {
 
         double overallProbability = 1;
 
-        CrawlerNode<DataContainer> actNode = tree.getRoot();
+        CrawlerNode actNode = tree.getRoot();
         for (char c : chars) {
             double singleCharProbabilityOnGivenNode = getProbOfCharOnLevel(actNode, c);
             actNode = getChildWithCharAsData(actNode, c);
@@ -87,22 +87,22 @@ public class ProbabilityCalculator {
     }
 
 
-    private double getProbOfCharOnLevel(CrawlerNode<DataContainer> node, char c) {
+    private double getProbOfCharOnLevel(CrawlerNode node, char c) {
         double levelcount = 0;
         if (node == null) {
             //@ToDo: this should return the smallest value for a probability that is possible!
             return 0.0;
         }
-        ArrayList<CrawlerNode<DataContainer>> children = node.getChildrenAsArrayList();
+        ArrayList<CrawlerNode> children = node.getChildren();
         if (children == null||children.isEmpty()) {
             throw new NullPointerException("node has no childs");
         }
-        for (CrawlerNode<DataContainer> crawlerNode : children) {
+        for (CrawlerNode crawlerNode : children) {
             levelcount += crawlerNode.getData().getCount();
         }
         //get appearance of char
         double appearanceOfChar = 0;
-        for (CrawlerNode<DataContainer> crawlerNode : children) {
+        for (CrawlerNode crawlerNode : children) {
 
             if (crawlerNode.getData().getChar() == c) {
                 appearanceOfChar = crawlerNode.getData().getCount();
@@ -112,9 +112,9 @@ public class ProbabilityCalculator {
         return appearanceOfChar / levelcount;
     }
 
-    private CrawlerNode<DataContainer> getChildWithCharAsData(CrawlerNode<DataContainer> node, char c) {
+    private CrawlerNode getChildWithCharAsData(CrawlerNode node, char c) {
 
-        for (CrawlerNode<DataContainer> crawlerNode : node.getChildrenAsArrayList()) {
+        for (CrawlerNode crawlerNode : node.getChildren()) {
 
             if (crawlerNode.getData().getChar() == c) {
                 return crawlerNode;
