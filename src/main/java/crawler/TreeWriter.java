@@ -18,16 +18,31 @@ public class TreeWriter {
         this.tree = tree;
     }
 
-
+    /**
+     * This method takes the tree given to the constructor, converts it to JSON
+     * and writes it to the path.
+     * @param path
+     * @throws FileNotFoundException
+     * @throws UnsupportedEncodingException
+     */
     public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
-        JSONObject jsonTree = new JSONObject();
-        jsonTree.put("chunksize", tree.getChunkSize());
 
+
+        //create JSON for root Node
+        JSONObject jsonRootNode=new JSONObject();
+        jsonRootNode.put("1", tree.getRoot().getData().getChar()+""); //char
+        jsonRootNode.put("2", tree.getRoot().getData().getCount()); //count
+
+        //create JSONObjects for children of root
         JSONArray rootChildren = new JSONArray();
         for (CrawlerNode rootChild : tree.getRoot().getChildren()) {
             rootChildren.add(createJSONObjectFromCrawlerNode(rootChild));
         }
-        jsonTree.put("rootchildren", rootChildren);
+        jsonRootNode.put("3", rootChildren);
+
+        JSONObject jsonTree = new JSONObject();
+        jsonTree.put("chunksize", tree.getChunkSize());
+        jsonTree.put("root",jsonRootNode);
         //write JSON to String
         PrintWriter writer = new PrintWriter(path);
         writer.append(jsonTree.toJSONString());
@@ -49,7 +64,7 @@ public class TreeWriter {
         // 2 : count
         // 3 : children
         JSONObject jsonNode = new JSONObject();
-        jsonNode.put("1", node.getData().getChar()); //char
+        jsonNode.put("1", node.getData().getChar()+""); //char
         jsonNode.put("2", node.getData().getCount()); //count
 
         JSONArray jsonChildren = new JSONArray();
