@@ -7,22 +7,22 @@ import java.util.ArrayList;
 
 public class T9Tree {
     private ArrayList<Node<T9DataContainer>> leafs = null;
-    private ProbabilityCalculator probCalc=null;
+    private ProbabilityCalculator probCalc = null;
     private int historySize;
 
     private Node<T9DataContainer> root = null;
-    public static int count = 0;
+    private static int count = 0;
 
-    public T9Tree(ProbabilityCalculator probCalc,int historySize) {
+    public T9Tree(ProbabilityCalculator probCalc, int historySize) {
         root = new Node<>(new T9DataContainer(-1, "root"));
         leafs = getLeafs(root);
         count = 0;
-        this.probCalc=probCalc;
-        this.historySize=historySize;
+        this.probCalc = probCalc;
+        this.historySize = historySize;
     }
 
     public void processButton(char button) {
-        ArrayList<String> list = null;
+        ArrayList<String> list = new ArrayList<>();
 
         try {
             list = mapButton(button);
@@ -32,15 +32,26 @@ public class T9Tree {
 
         for (Node<T9DataContainer> n : leafs) {
             for (String s : list) {
-                n.addChild(new T9DataContainer(1,s));
+                n.addChild(new T9DataContainer(1, s));
             }
         }
 
         updateLeafs();
-
+        for (Node<T9DataContainer> leaf : leafs) {
+            updateProbability(leaf);
+        }
     }
 
-    private void updateProbabilitys() {
+    private void updateProbability(Node<T9DataContainer> leaf) {
+        double probability ;
+        if (leaf.getParent() == root) {
+            probability = probCalc.probOfChar(leaf.getData().getAchar().charAt(0));
+        } else {
+            String history= getHistoryOfNode(leaf);
+            probability = probCalc.probOfString(history);
+        }
+
+        leaf.getData().setProbability(probability);
 
     }
 
@@ -51,6 +62,7 @@ public class T9Tree {
             leafs.add(start);
             return leafs;
         } else {
+
             for (Node<T9DataContainer> n : start.getChildren()) {
                 leafs.addAll(getLeafs(n));
             }
@@ -71,13 +83,18 @@ public class T9Tree {
     }
 
 
-    public Node<T9DataContainer> getRoot() {
-        return root;
-    }
+    private String getHistoryOfNode(Node<T9DataContainer> node) {
+        StringBuilder history = new StringBuilder();
+        Node<T9DataContainer> actnode = node;
+        for (int i = historySize; i > 0; i--) {
+            history.append(actnode.getData().getAchar());
+            actnode = actnode.getParent();
+            if (actnode == root) {
+                break;
+            }
 
-
-    public ArrayList<Node<T9DataContainer>> getLeafs() {
-        return leafs;
+        }
+        return history.toString();
     }
 
     private ArrayList<String> mapButton(char button) throws IllegalArgumentException {

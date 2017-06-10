@@ -29,4 +29,8 @@ public class T9DataContainer {
         this.probability = probability;
         this.achar = achar;
     }
+
+    public String toString() {
+        return achar + " : " + probability;
+    }
 }
