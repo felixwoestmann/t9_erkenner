@@ -2,11 +2,10 @@ package crawler;
 
 import crawler.CrawlerNode;
 import crawler.CrawlerTree;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -14,7 +13,6 @@ import java.util.ArrayList;
  */
 public class TreeWriter {
     private CrawlerTree tree;
-    private int count = 1;
 
     public TreeWriter(CrawlerTree tree) {
         this.tree = tree;
@@ -22,106 +20,46 @@ public class TreeWriter {
 
 
     public void writeToFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
-        numberTree(tree.getRoot());
-        //open print writer
-        PrintWriter writer = new PrintWriter(path, "UTF-8");
+        JSONObject jsonTree = new JSONObject();
+        jsonTree.put("chunksize", tree.getChunkSize());
 
-        CrawlerNode root = tree.getRoot();
-        //print begin of json with tree data
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"nodes\":[");
-
-        sb.append("\n");
-        //add root
-        sb.append(createJSONObjectStringFromSingleNode(root)).append(",");
-
-        writer.println(sb.toString());
-        sb = new StringBuilder();
-        // add other nodes
-        for (CrawlerNode crawlerNode : root.getChildren()) {
-            sb.append(createJSONArrayStringFromNodes(crawlerNode));
-            sb.append(",\n");
-            writer.println(sb.toString());
-            sb = new StringBuilder();
+        JSONArray rootChildren = new JSONArray();
+        for (CrawlerNode rootChild : tree.getRoot().getChildren()) {
+            rootChildren.add(createJSONObjectFromCrawlerNode(rootChild));
         }
-
-
-        //finalize everything
-        sb.append("],\"chunksize\":").append(tree.getChunkSize()).append("}");
-
-
-        writer.println(sb.toString());
+        jsonTree.put("rootchildren", rootChildren);
+        //write JSON to String
+        PrintWriter writer = new PrintWriter(path);
+        writer.append(jsonTree.toJSONString());
         writer.close();
     }
 
-    private String createJSONArrayStringFromNodes(CrawlerNode node) {
-        ArrayList<CrawlerNode> nodes = getListOfNodes(node);
-        StringBuilder sb = new StringBuilder();
-
-        for (CrawlerNode crawlerNode : nodes) {
-            sb.append(createJSONObjectStringFromSingleNode(crawlerNode));
-            sb.append(",");
-        }
-
-        //remove last komma
-        String returnvalue = sb.toString();
-        return returnvalue.substring(0, returnvalue.length() - 1);
-    }
-
-
-    private String createJSONObjectStringFromSingleNode(CrawlerNode node) {
-        //use numbers instead of strings to save disk space
-        JSONObject n = new JSONObject();
-        n.put("1", node.getData().getChar() + ""); //char
-        n.put("2", node.getData().getCount()); //count
-        n.put("3", node.getId()); //id
-        CrawlerNode parent = node.getParent();
-
-        if (parent != null) {
-            n.put("4", node.getParent().getId()); //parent
-        } else {
-            n.put("4", "-1"); //parent
-        }
-
-        return n.toJSONString();
-    }
-
-
-    private ArrayList<CrawlerNode> getListOfNodes(CrawlerNode node) {
-        ArrayList<CrawlerNode> nodes = new ArrayList<CrawlerNode>();
-        ArrayList<CrawlerNode> children;
-
-        nodes.add(node);
-
-        if ((children = node.getChildren()) != null) {
-            for (CrawlerNode n : children) {
-                nodes.addAll(getListOfNodes(n));
-            }
-        } else {
-            nodes.add(node);
-        }
-        return nodes;
-    }
-
-    /*
-    Number tree so that each child of the root has a consistent room of numbers.
-
-    child 1 id: 2
-        2 - 1336
-    child 2 id: 1337
-        1337 - 2999
-    child 3 id: 3000
-
-
+    /**
+     * This method recieves a node an converts it to a JSONObject which contains all information about the node.
+     * Including all children as JSONObjects
+     *
+     * It does this using recursion
+     *
+     * @param node
+     * @return JSONObject containing all children
      */
-    private void numberTree(CrawlerNode node) {
-        node.setId(count++);
+    private JSONObject createJSONObjectFromCrawlerNode(CrawlerNode node) {
+        //use numbers instead of descriptive strings to get json file smaller
+        // 1 : char
+        // 2 : count
+        // 3 : children
+        JSONObject jsonNode = new JSONObject();
+        jsonNode.put("1", node.getData().getChar()); //char
+        jsonNode.put("2", node.getData().getCount()); //count
 
-        ArrayList<CrawlerNode> children = node.getChildren();
-        if (!children.isEmpty()) {
-            for (CrawlerNode child : children) {
-                numberTree(child);
-            }
+        JSONArray jsonChildren = new JSONArray();
+        for (CrawlerNode child : node.getChildren()) {
+            jsonChildren.add(createJSONObjectFromCrawlerNode(child));
         }
+
+        jsonNode.put("3", jsonChildren); //children
+
+        return jsonNode;
     }
+
 }
