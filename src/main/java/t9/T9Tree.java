@@ -1,7 +1,5 @@
 package t9;
 
-import crawler.CrawlerNode;
-import crawler.DataContainer;
 import crawler.ProbabilityCalculator;
 
 import java.util.*;
@@ -11,12 +9,11 @@ public class T9Tree {
     private ProbabilityCalculator probCalc = null;
     private int historySize;
     private T9Node<T9DataContainer> root = null;
-    private static int count = 0;
+
 
     public T9Tree(ProbabilityCalculator probCalc, int historySize) {
         root = new T9Node<>(new T9DataContainer(-1, "root"));
         leafs = getLeafs(root);
-        count = 0;
         this.probCalc = probCalc;
         this.historySize = historySize;
     }
@@ -31,14 +28,36 @@ public class T9Tree {
         }
 
         for (T9Node<T9DataContainer> n : leafs) {
-            for (String s : list) {
-                n.addChild(new T9DataContainer(1, s));
+            if (n.getData().isActive()) {
+                for (String s : list) {
+                    n.addChild(new T9DataContainer(1, s));
+                }
             }
+
         }
 
         updateLeafs();
         for (T9Node<T9DataContainer> leaf : leafs) {
             updateProbability(leaf);
+        }
+        markPathsInactive(10);
+    }
+
+    private void clean() {
+        //cleans tree from all inactive paths
+
+        //therefore we will delete all nodes, beginning by the leafes, as long as it is inactive or all children are inactive
+
+    }
+
+    private void markPathsInactive(int pathcount) {
+        ArrayList<T9Node<T9DataContainer>> kbestPaths = getKBestPaths(pathcount);
+        ArrayList<T9Node<T9DataContainer>> bestSymbolPaths = getBestPathForEveryLeafSymbol();
+
+        for (T9Node<T9DataContainer> leaf : leafs) {
+            if (!kbestPaths.contains(leaf) && !bestSymbolPaths.contains(leaf)) {
+                leaf.getData().setActive(false);
+            }
         }
     }
 
@@ -60,27 +79,9 @@ public class T9Tree {
         leaf.getData().setProbability(probability);
     }
 
-
-    private ArrayList<T9Node<T9DataContainer>> getLeafs(T9Node<T9DataContainer> start) {
-        ArrayList<T9Node<T9DataContainer>> leafs = new ArrayList<>();
-
-        if (start.isLeaf()) {
-            leafs.add(start);
-            return leafs;
-        } else {
-
-            for (T9Node<T9DataContainer> n : start.getChildren()) {
-                leafs.addAll(getLeafs(n));
-            }
-        }
-
-        return leafs;
-    }
-
     private void updateLeafs() {
         ArrayList<T9Node<T9DataContainer>> tmplist = new ArrayList<>();
 
-        count += leafs.size();
         for (T9Node<T9DataContainer> n : leafs) {
             tmplist.addAll(getLeafs(n));
         }
@@ -88,9 +89,34 @@ public class T9Tree {
         leafs = tmplist;
     }
 
-    public void printBestPaths(int pathCount) {
-        T9Node<T9DataContainer> printnode = new T9Node<>(new T9DataContainer(-1.0, "root"));
-        ArrayList<T9Node<T9DataContainer>> pathlist;
+    private ArrayList<T9Node<T9DataContainer>> getBestPathForEveryLeafSymbol() {
+        HashMap<String, T9Node<T9DataContainer>> map = new HashMap<>();
+
+        //save the best node of every character in a map
+        for (T9Node<T9DataContainer> leaf : leafs) {
+            String character = leaf.getData().getCharAsString();
+            T9Node<T9DataContainer> bestNode = map.get(character);
+            if (bestNode == null) {
+                map.put(character, leaf);
+                break;
+            }
+            if (bestNode.getData().getProbability() < leaf.getData().getProbability()) {
+                map.put(character, leaf);
+            }
+
+        }
+        return new ArrayList<>(map.values());
+
+    }
+
+
+    public void printBestPaths(int pathcount) {
+        for (T9Node<T9DataContainer> leaf : getKBestPaths(pathcount)) {
+            System.out.println(getPathAsString(leaf));
+        }
+    }
+
+    private ArrayList<T9Node<T9DataContainer>> getKBestPaths(int K) {
         //the best path is at the same time the path of the best leaf
         //search best leafs
 
@@ -102,19 +128,16 @@ public class T9Tree {
         });
 
         //cut list if it is bigger then the path count
-        if (leafs.size() < pathCount) {
-            pathlist = new ArrayList<>(leafs);
+        if (leafs.size() < K) {
+            return new ArrayList<>(leafs);
         } else {
-            pathlist = new ArrayList<>(leafs.subList(0, pathCount));
+            return new ArrayList<>(leafs.subList(0, K));
         }
 
-        for (T9Node<T9DataContainer> leaf : pathlist) {
-            System.out.println(getPath(leaf));
-        }
 
     }
 
-    private String getPath(T9Node<T9DataContainer> node) {
+    private String getPathAsString(T9Node<T9DataContainer> node) {
         LinkedList<String> strings = new LinkedList<>();
 
 
@@ -137,6 +160,26 @@ public class T9Tree {
         return returnval;
     }
 
+    public void printTree() {
+        root.print();
+    }
+
+
+    private ArrayList<T9Node<T9DataContainer>> getLeafs(T9Node<T9DataContainer> start) {
+        ArrayList<T9Node<T9DataContainer>> leafs = new ArrayList<>();
+
+        if (start.isLeaf()) {
+            leafs.add(start);
+            return leafs;
+        } else {
+
+            for (T9Node<T9DataContainer> n : start.getChildren()) {
+                leafs.addAll(getLeafs(n));
+            }
+        }
+
+        return leafs;
+    }
 
     private ArrayList<String> mapButton(char button) throws IllegalArgumentException {
 
@@ -205,10 +248,6 @@ public class T9Tree {
             default:
                 throw new IllegalArgumentException("Zeichen ist nicht bekannt");
         }
-    }
-
-    public void printTree() {
-        root.print();
     }
 
 }

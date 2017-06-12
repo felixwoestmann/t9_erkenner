@@ -6,6 +6,9 @@ package t9;
 public class T9DataContainer {
     private double probability=1;
     private String achar;
+    private boolean active;
+
+
 
     public String getCharAsString() {
         return achar;
@@ -17,6 +20,14 @@ public class T9DataContainer {
 
     public void setAchar(String achar) {
         this.achar = achar;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public double getProbability() {
@@ -32,6 +43,7 @@ public class T9DataContainer {
 
         this.probability = probability;
         this.achar = achar;
+        this.active=true;
     }
 
     public String toString() {
