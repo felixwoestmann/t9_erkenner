@@ -4,11 +4,15 @@ package t9;
  * Created by lostincoding on 09.06.17.
  */
 public class T9DataContainer {
-    private double probability;
+    private double probability=1;
     private String achar;
 
-    public String getAchar() {
+    public String getCharAsString() {
         return achar;
+    }
+
+    public char getChar() {
+        return achar.charAt(0);
     }
 
     public void setAchar(String achar) {

@@ -16,27 +16,19 @@ public class Main {
     private static String treeLocationPath = "./tree.json";
 
     public static void main(String args[]) throws IOException {
-        CrawlerTree wikipediaTree = new CrawlerTree(3);
-        WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/one");
-//
-//        persistTree(wikipediaTree, treeLocationPath);
-//        calculateProbOfWordInTree("Felix", wikipediaTree);
-
         TreeReader reader = new TreeReader();
-        CrawlerTree parseTree = reader.getTreeFromFile("tree_3.json");
-        ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(wikipediaTree);
-
+        CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
+        ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
         T9Tree inputTree = new T9Tree(probabilityCalculator, 2);
-        String input = "42556";
+        String input = "42";
 
         for (int i = 0; i < input.length(); i++) {
-            System.out.println("i: " + (i + 1));
             inputTree.processButton(input.charAt(i));
+         //   inputTree.printTree();
         }
-        // inputTree.printTree();
+        inputTree.printBestPaths(30);
         System.out.println("Finished everything");
-
     }
 
     private static void calculateProbOfWordInTree(String searchString, CrawlerTree tree) {

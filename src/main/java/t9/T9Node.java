@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class T9Node<T> {
-    protected T data = null;
-    protected List<T9Node<T>> children = new ArrayList<>();
-    protected T9Node<T> parent = null;
+    private T data = null;
+    private List<T9Node<T>> children = new ArrayList<>();
+    private T9Node<T> parent = null;
 
     public T9Node(T data) {
         this.data = data;
@@ -65,7 +65,6 @@ public class T9Node<T> {
         return sb.toString();
     }
 
-
     private void getStringRepresentation(String prefix, StringBuilder sb, boolean isTail) {
         sb.append(prefix).append(isTail ? "└── " : "├── ").append(data.toString()).append("\n");
         for (int i = 0; i < children.size() - 1; i++) {
@@ -76,4 +75,20 @@ public class T9Node<T> {
                     .getStringRepresentation(prefix + (isTail ? "    " : "│   "), sb, true);
         }
     }
+
+    public String getHistory(int historySize) {
+        StringBuilder history = new StringBuilder();
+        T9Node<T9DataContainer> actnode = (T9Node<T9DataContainer>) getParent();
+        for (int i = historySize; i > 0; i--) {
+            if (actnode.getParent()==null) {
+                break;
+            }
+            history.append(actnode.getData().getChar());
+            actnode = actnode.getParent();
+
+
+        }
+        return history.toString();
+    }
+
 }

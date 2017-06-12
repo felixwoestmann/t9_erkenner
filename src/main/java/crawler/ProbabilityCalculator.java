@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class ProbabilityCalculator {
     private CrawlerTree tree;
+    private final double CORRECTBUTTONPROB=0.95;
 
     public ProbabilityCalculator(CrawlerTree tree) {
         this.tree = tree;
@@ -86,7 +87,6 @@ public class ProbabilityCalculator {
         return completeProb / prefixProb;
     }
 
-
     private double getProbOfCharOnLevel(CrawlerNode node, char c) {
         double levelcount = 0;
         if (node == null) {
@@ -122,6 +122,13 @@ public class ProbabilityCalculator {
         }
         return null;
     }
+
+
+
+    public double probOfPressedButtonAndChar(char c) {
+        return probOfChar(c)*CORRECTBUTTONPROB;
+    }
+
 
 
 }

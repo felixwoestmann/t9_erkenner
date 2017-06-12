@@ -1,14 +1,15 @@
 package t9;
 
+import crawler.CrawlerNode;
+import crawler.DataContainer;
 import crawler.ProbabilityCalculator;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class T9Tree {
     private ArrayList<T9Node<T9DataContainer>> leafs = null;
     private ProbabilityCalculator probCalc = null;
     private int historySize;
-
     private T9Node<T9DataContainer> root = null;
     private static int count = 0;
 
@@ -42,17 +43,23 @@ public class T9Tree {
     }
 
     private void updateProbability(T9Node<T9DataContainer> leaf) {
-        double probability ;
-        if (leaf.getParent() == root) {
-            probability = probCalc.probOfChar(leaf.getData().getAchar().charAt(0));
-        } else {
-            String history= getHistoryOfNode(leaf);
-            probability = probCalc.probOfString(history);
-        }
+        double probability = 0;
+        char c = leaf.getData().getChar();
+        double historyProbability = leaf.getData().getProbability();
+
+        //prob ln P (bn|b1...bn-1) prob of char with prefix
+        double probOfCharWithPrefix = probCalc.probOfCharWithDefinedPrefix(leaf.getHistory(historySize), c);
+        //prob ln P (tn|bn)
+        double probOfPressedButton = probCalc.probOfPressedButtonAndChar(c);
+        //calc ln
+        probOfCharWithPrefix = Math.log(probOfCharWithPrefix) * -1;
+        probOfPressedButton = Math.log(probOfPressedButton) * -1;
+
+        probability = historyProbability + probOfCharWithPrefix + probOfPressedButton;
 
         leaf.getData().setProbability(probability);
-
     }
+
 
     private ArrayList<T9Node<T9DataContainer>> getLeafs(T9Node<T9DataContainer> start) {
         ArrayList<T9Node<T9DataContainer>> leafs = new ArrayList<>();
@@ -81,20 +88,55 @@ public class T9Tree {
         leafs = tmplist;
     }
 
+    public void printBestPaths(int pathCount) {
+        T9Node<T9DataContainer> printnode = new T9Node<>(new T9DataContainer(-1.0, "root"));
+        ArrayList<T9Node<T9DataContainer>> pathlist;
+        //the best path is at the same time the path of the best leaf
+        //search best leafs
 
-    private String getHistoryOfNode(T9Node<T9DataContainer> node) {
-        StringBuilder history = new StringBuilder();
-        T9Node<T9DataContainer> actnode = node;
-        for (int i = historySize; i > 0; i--) {
-            history.append(actnode.getData().getAchar());
-            actnode = actnode.getParent();
-            if (actnode == root) {
-                break;
-            }
+        //sort leafs so it is sorted by path quality
+        leafs.sort((o1, o2) -> {
+            //since we have to return an integer we multiply the probability by 1000 to get more precise
+            double returnValue = o2.getData().getProbability() - o1.getData().getProbability();
+            return (int) (returnValue * 1000);
+        });
 
+        //cut list if it is bigger then the path count
+        if (leafs.size() < pathCount) {
+            pathlist = new ArrayList<>(leafs);
+        } else {
+            pathlist = new ArrayList<>(leafs.subList(0, pathCount));
         }
-        return history.toString();
+
+        for (T9Node<T9DataContainer> leaf : pathlist) {
+            System.out.println(getPath(leaf));
+        }
+
     }
+
+    private String getPath(T9Node<T9DataContainer> node) {
+        LinkedList<String> strings = new LinkedList<>();
+
+
+        //print out the path of every leaf
+
+        T9Node<T9DataContainer> actnode = node;
+        while (!actnode.getData().getCharAsString().equals(root.getData().getCharAsString())) {
+            String line = actnode.getData().getChar() + " : " + actnode.getData().getProbability() + "-->" + ("\n");
+            strings.add(line);
+            actnode = actnode.getParent();
+        }
+        Collections.reverse(strings);
+
+
+        String returnval = "";
+        for (String string : strings) {
+            returnval += string;
+        }
+
+        return returnval;
+    }
+
 
     private ArrayList<String> mapButton(char button) throws IllegalArgumentException {
 
