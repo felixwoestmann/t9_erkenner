@@ -18,25 +18,17 @@ import java.io.UnsupportedEncodingException;
 public class TestTreeWriter {
 
     @Test
-    public void testWriteToFile() throws IOException {
+    public void testWriteToFileForDifferentChunkSizes() throws IOException {
+        CrawlerTree wikipediaTree;
+        TreeWriter writer;
 
+        for (int chunksize = 3; chunksize <= 5; chunksize++) {
+            wikipediaTree = new CrawlerTree(chunksize);
+            WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
 
-        CrawlerTree wikipediaTree = new CrawlerTree(3);
-        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
-
-        TreeWriter writer = new TreeWriter(wikipediaTree);
-        writer.writeToFile("./tree_3.json");
-
-        wikipediaTree=new CrawlerTree(4);
-        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
-        writer=new TreeWriter(wikipediaTree);
-        writer.writeToFile("./tree_4.json");
-
-        wikipediaTree=new CrawlerTree(5);
-        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
-        writer=new TreeWriter(wikipediaTree);
-        writer.writeToFile("./tree_5.json");
-
+            writer = new TreeWriter(wikipediaTree);
+            writer.writeToFile(String.format("./tree_%d.json", chunksize));
+        }
 /*        TreeReader reader = new TreeReader();
 
         Timer timer = new Timer();
