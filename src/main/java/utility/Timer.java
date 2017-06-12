@@ -31,6 +31,7 @@ public class Timer {
         validateState("You must stop the timer before printing the time");
         System.out.print(message + " : ");
         printTime(unit);
+        System.out.println();
     }
 
     private long convertToUnit(TimeUnit unit, long milliSeconds) {
