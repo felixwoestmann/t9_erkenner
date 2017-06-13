@@ -9,7 +9,7 @@ public class T9Tree {
     private ProbabilityCalculator probCalc = null;
     private int historySize;
     private T9Node<T9DataContainer> root = null;
-
+    private int size = 0;
 
     public T9Tree(ProbabilityCalculator probCalc, int historySize) {
         root = new T9Node<>(new T9DataContainer(-1, "root"));
@@ -22,16 +22,20 @@ public class T9Tree {
         ArrayList<String> list = new ArrayList<>();
 
         try {
-            list = mapButton(button);
+            list = T9Keyboard.mapButton(button);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 
         for (T9Node<T9DataContainer> n : leafs) {
+            //just expand node if i is active
             if (n.getData().isActive()) {
+                size += list.size();
                 for (String s : list) {
                     n.addChild(new T9DataContainer(1, s));
                 }
+            } else {
+                System.out.print("Skip node " + n.getStringRepresentation() + " cause it is not active\n");
             }
 
         }
@@ -40,31 +44,77 @@ public class T9Tree {
         for (T9Node<T9DataContainer> leaf : leafs) {
             updateProbability(leaf);
         }
-        markPathsInactive(10);
+        markLeafsInactive(5);
+        cleanTreeFromInactiveNodes();
     }
 
-    private void clean() {
+    private void cleanTreeFromInactiveNodes() {
         //cleans tree from all inactive paths
-
         //therefore we will delete all nodes, beginning by the leafes, as long as it is inactive or all children are inactive
 
+        for (T9Node<T9DataContainer> leaf : leafs) {
+            if (!leaf.getData().isActive()) {
+                deletePathFromBottom(leaf);
+            }
+        }
     }
 
-    private void markPathsInactive(int pathcount) {
+    private void deletePathFromBottom(T9Node<T9DataContainer> leaf) {
+        T9Node<T9DataContainer> actnode = leaf;
+        T9Node<T9DataContainer> parent = actnode.getParent();
+
+
+        if (!actnode.getData().isActive()) {
+            parent.getChildren().remove(actnode);
+
+            actnode = actnode.getParent();
+            parent = actnode.getParent();
+            size--;
+        }
+
+
+        System.out.println("Size of T9Tree :" + size);
+    }
+
+
+    private void markLeafsInactive(int pathcount) {
         ArrayList<T9Node<T9DataContainer>> kbestPaths = getKBestPaths(pathcount);
         ArrayList<T9Node<T9DataContainer>> bestSymbolPaths = getBestPathForEveryLeafSymbol();
 
+
+        //mark all paths as inactive whch are in neither of those lists
         for (T9Node<T9DataContainer> leaf : leafs) {
             if (!kbestPaths.contains(leaf) && !bestSymbolPaths.contains(leaf)) {
                 leaf.getData().setActive(false);
             }
         }
+
+
+    }
+
+    private void markPathAsInactive(T9Node<T9DataContainer> node) {
+        //first check if node has children at all
+        T9Node<T9DataContainer> parent = node.getParent();
+        if (isRoot(parent)) {
+
+        }
+        if (node.getChildren() == null || node.getChildren().isEmpty()) {
+
+        }
+    }
+
+    private boolean isRoot(T9Node<T9DataContainer> node) {
+        return node.getData().getCharAsString().equals(root.getData().getCharAsString());
     }
 
     private void updateProbability(T9Node<T9DataContainer> leaf) {
         double probability = 0;
         char c = leaf.getData().getChar();
-        double historyProbability = leaf.getData().getProbability();
+        double historyProbability = 0;
+        if (isRoot(leaf)) {
+            historyProbability = leaf.getData().getProbability();
+        }
+
 
         //prob ln P (bn|b1...bn-1) prob of char with prefix
         double probOfCharWithPrefix = probCalc.probOfCharWithDefinedPrefix(leaf.getHistory(historySize), c);
@@ -83,7 +133,11 @@ public class T9Tree {
         ArrayList<T9Node<T9DataContainer>> tmplist = new ArrayList<>();
 
         for (T9Node<T9DataContainer> n : leafs) {
-            tmplist.addAll(getLeafs(n));
+            //just update leaf if node is active
+            if (n.getData().isActive()) {
+                tmplist.addAll(getLeafs(n));
+            }
+
         }
 
         leafs = tmplist;
@@ -144,7 +198,7 @@ public class T9Tree {
         //print out the path of every leaf
 
         T9Node<T9DataContainer> actnode = node;
-        while (!actnode.getData().getCharAsString().equals(root.getData().getCharAsString())) {
+        while (!isRoot(actnode)) {
             String line = actnode.getData().getChar() + " : " + actnode.getData().getProbability() + "-->" + ("\n");
             strings.add(line);
             actnode = actnode.getParent();
@@ -181,73 +235,5 @@ public class T9Tree {
         return leafs;
     }
 
-    private ArrayList<String> mapButton(char button) throws IllegalArgumentException {
-
-        ArrayList<String> list = new ArrayList<>();
-        switch (button) {
-            case '1':
-                list.add("1");
-                list.add(".");
-                list.add(",");
-                return list;
-            case '2':
-                list.add("2");
-                list.add("a");
-                list.add("b");
-                list.add("c");
-                return list;
-            case '3':
-                list.add("3");
-                list.add("d");
-                list.add("e");
-                list.add("f");
-                return list;
-            case '4':
-                list.add("4");
-                list.add("g");
-                list.add("h");
-                list.add("i");
-                return list;
-            case '5':
-                list.add("5");
-                list.add("j");
-                list.add("k");
-                list.add("l");
-                return list;
-            case '6':
-                list.add("6");
-                list.add("m");
-                list.add("n");
-                list.add("o");
-                return list;
-            case '7':
-                list.add("7");
-                list.add("p");
-                list.add("q");
-                list.add("r");
-                list.add("s");
-                return list;
-            case '8':
-                list.add("8");
-                list.add("t");
-                list.add("u");
-                list.add("v");
-                return list;
-            case '9':
-                list.add("9");
-                list.add("w");
-                list.add("x");
-                list.add("y");
-                list.add("z");
-                return list;
-            case '0':
-                list.add("0");
-                list.add(" ");
-                return list;
-
-            default:
-                throw new IllegalArgumentException("Zeichen ist nicht bekannt");
-        }
-    }
 
 }
