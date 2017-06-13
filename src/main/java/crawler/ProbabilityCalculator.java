@@ -5,13 +5,14 @@ import crawler.CrawlerTree;
 import crawler.DataContainer;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
  * Created by lostincoding on 23.05.17.
  */
 public class ProbabilityCalculator {
     private CrawlerTree tree;
-    private final double CORRECTBUTTONPROB=0.95;
+    private final double CORRECTBUTTONPROB = 0.95;
 
     public ProbabilityCalculator(CrawlerTree tree) {
         this.tree = tree;
@@ -94,7 +95,7 @@ public class ProbabilityCalculator {
             return 0.0;
         }
         ArrayList<CrawlerNode> children = node.getChildren();
-        if (children == null||children.isEmpty()) {
+        if (children == null || children.isEmpty()) {
             throw new NullPointerException("node has no childs");
         }
         for (CrawlerNode crawlerNode : children) {
@@ -120,15 +121,15 @@ public class ProbabilityCalculator {
                 return crawlerNode;
             }
         }
+
+
         return null;
     }
 
 
-
     public double probOfPressedButtonAndChar(char c) {
-        return probOfChar(c)*CORRECTBUTTONPROB;
+        return probOfChar(c) * CORRECTBUTTONPROB;
     }
-
 
 
 }

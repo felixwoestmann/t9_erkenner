@@ -18,6 +18,7 @@ public class T9Tree {
         this.historySize = historySize;
     }
 
+
     public void processButton(char button) {
         //get a list of literals
         final ArrayList<String> list = T9Keyboard.mapButton(button);
@@ -48,8 +49,6 @@ public class T9Tree {
                 cleanTreeFromInactiveNodes(leaf);
             }
         });
-
-
     }
 
     public void printTree() {
@@ -62,6 +61,11 @@ public class T9Tree {
         }
     }
 
+    /**
+     * Removes all nodes which are inactive.
+     * Starts at bottom and works its way up
+     * @param node
+     */
     private void cleanTreeFromInactiveNodes(T9Node<T9DataContainer> node) {
         //cleans tree from all inactive paths
         T9Node<T9DataContainer> parent = node.getParent();
@@ -72,7 +76,15 @@ public class T9Tree {
         }
     }
 
-
+    /**
+     * Marks all leafes of the tree as inactive which aren't
+     * - in the best K paths (K is a positive integer)
+     * OR
+     * - the best path which ends in that symbol
+     *
+     * compare P11
+     * @param pathcount
+     */
     private void markLeafsInactive(int pathcount) {
         ArrayList<T9Node<T9DataContainer>> kbestPaths = getKBestPaths(pathcount);
         ArrayList<T9Node<T9DataContainer>> bestSymbolPaths = getBestPathForEveryLeafSymbol();
@@ -85,7 +97,13 @@ public class T9Tree {
         });
     }
 
-
+    /**
+     * Method gets a node and works its way up from the bottom
+     * If all childs of the parent node are inactive the parent node is set inactive too
+     *
+     * Stops if a parent node can't be set as inactive
+     * @param node
+     */
     private void markPathAsInactive(T9Node<T9DataContainer> node) {
 
         T9Node<T9DataContainer> parent = node.getParent();
@@ -113,10 +131,12 @@ public class T9Tree {
         return node.getData().getCharAsString().equals(root.getData().getCharAsString());
     }
 
+
     private void calcProbabilityForNode(T9Node<T9DataContainer> leaf) {
-        double probability = 0;
+        double probability;
         char c = leaf.getData().getChar();
         double historyProbability = 0;
+
         if (!isRoot(leaf.getParent())) {
             historyProbability = leaf.getParent().getData().getProbability();
         }
@@ -167,6 +187,13 @@ public class T9Tree {
 
     }
 
+
+    /**
+     * Returns a list of the K best paths.
+     * If K=10 then you get the 10 best paths
+     * @param K
+     * @return
+     */
     private ArrayList<T9Node<T9DataContainer>> getKBestPaths(int K) {
         //the best path is at the same time the path of the best leaf
         //search best leafs
@@ -188,6 +215,11 @@ public class T9Tree {
 
     }
 
+    /**
+     * Returns the path from the given node to the root node as String
+     * @param node
+     * @return
+     */
     private String getPathAsString(T9Node<T9DataContainer> node) {
         LinkedList<String> strings = new LinkedList<>();
 
@@ -203,12 +235,9 @@ public class T9Tree {
         Collections.reverse(strings);
 
 
-        String returnval = "";
-        for (String string : strings) {
-            returnval += string;
-        }
-
-        return returnval;
+        StringBuilder returnval = new StringBuilder();
+        strings.forEach(returnval::append);
+        return returnval.toString();
     }
 
 
@@ -219,10 +248,7 @@ public class T9Tree {
             leafs.add(start);
             return leafs;
         } else {
-
-            for (T9Node<T9DataContainer> n : start.getChildren()) {
-                leafs.addAll(getLeafs(n));
-            }
+            start.getChildren().forEach(node -> leafs.addAll(getLeafs(node)));
         }
 
         return leafs;
