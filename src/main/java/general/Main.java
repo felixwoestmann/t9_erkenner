@@ -21,13 +21,13 @@ public class Main {
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
         T9Tree inputTree = new T9Tree(probabilityCalculator, 2);
-        String input = "42";
+        String input = "2333";
 
         for (int i = 0; i < input.length(); i++) {
             inputTree.processButton(input.charAt(i));
-         //   inputTree.printTree();
+            inputTree.printTree();
         }
-        inputTree.printBestPaths(30);
+
         System.out.println("Finished everything");
     }
 

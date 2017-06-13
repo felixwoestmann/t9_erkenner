@@ -9,7 +9,6 @@ public class T9Tree {
     private ProbabilityCalculator probCalc = null;
     private int historySize;
     private T9Node<T9DataContainer> root = null;
-    private int size = 0;
 
     public T9Tree(ProbabilityCalculator probCalc, int historySize) {
         root = new T9Node<>(new T9DataContainer(-1, "root"));
@@ -19,61 +18,62 @@ public class T9Tree {
     }
 
     public void processButton(char button) {
-        ArrayList<String> list = new ArrayList<>();
+        //get a list of literals
+       final ArrayList<String> list =  T9Keyboard.mapButton(button);
 
-        try {
-            list = T9Keyboard.mapButton(button);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
 
-        for (T9Node<T9DataContainer> n : leafs) {
-            //just expand node if i is active
-            if (n.getData().isActive()) {
-                size += list.size();
+        //append every literal to every leaf if it is active
+        leafs.forEach(leaf -> {
+            if (leaf.getData().isActive()) {
                 for (String s : list) {
-                    n.addChild(new T9DataContainer(1, s));
+                    leaf.addChild(new T9DataContainer(1, s));
                 }
-            } else {
-                System.out.print("Skip node " + n.getStringRepresentation() + " cause it is not active\n");
             }
-
-        }
-
+        });
+        //update the list of leafs to the new leafs
         updateLeafs();
-        for (T9Node<T9DataContainer> leaf : leafs) {
-            updateProbability(leaf);
-        }
+
+        //set Probability for every leaf
+        leafs.forEach(this::calcProbabilityForNode);
+
+        //mark unprobable leafs as inactive
         markLeafsInactive(5);
-        cleanTreeFromInactiveNodes();
-    }
-
-    private void cleanTreeFromInactiveNodes() {
-        //cleans tree from all inactive paths
-        //therefore we will delete all nodes, beginning by the leafes, as long as it is inactive or all children are inactive
-
-        for (T9Node<T9DataContainer> leaf : leafs) {
+        //try to mark as much of the path to a inactive leaf as inactive ,too
+        leafs.forEach(leaf -> {
             if (!leaf.getData().isActive()) {
-                deletePathFromBottom(leaf);
+                markPathAsInactive(leaf);
             }
+        });
+        //delete all inactive nodes
+        leafs.forEach(leaf -> {
+            if (!leaf.getData().isActive()) {
+                cleanTreeFromInactiveNodes(leaf);
+            }
+        });
+
+
+    }
+
+    public void printTree() {
+        root.print();
+    }
+
+    public void printBestPaths(int pathcount) {
+        for (T9Node<T9DataContainer> leaf : getKBestPaths(pathcount)) {
+            System.out.println(getPathAsString(leaf));
         }
     }
 
-    private void deletePathFromBottom(T9Node<T9DataContainer> leaf) {
-        T9Node<T9DataContainer> actnode = leaf;
-        T9Node<T9DataContainer> parent = actnode.getParent();
+    private void cleanTreeFromInactiveNodes(T9Node<T9DataContainer> node) {
+        //cleans tree from all inactive paths
+        T9Node<T9DataContainer> parent = node.getParent();
 
-
-        if (!actnode.getData().isActive()) {
-            parent.getChildren().remove(actnode);
-
-            actnode = actnode.getParent();
-            parent = actnode.getParent();
-            size--;
+        if (!node.getData().isActive()) {
+            parent.getChildren().remove(node);
+            cleanTreeFromInactiveNodes(parent);
         }
 
 
-        System.out.println("Size of T9Tree :" + size);
     }
 
 
@@ -82,24 +82,36 @@ public class T9Tree {
         ArrayList<T9Node<T9DataContainer>> bestSymbolPaths = getBestPathForEveryLeafSymbol();
 
 
-        //mark all paths as inactive whch are in neither of those lists
+        //mark all leafs as inactive whch are in neither of those lists
         for (T9Node<T9DataContainer> leaf : leafs) {
             if (!kbestPaths.contains(leaf) && !bestSymbolPaths.contains(leaf)) {
                 leaf.getData().setActive(false);
             }
         }
 
-
     }
 
+
     private void markPathAsInactive(T9Node<T9DataContainer> node) {
-        //first check if node has children at all
+
         T9Node<T9DataContainer> parent = node.getParent();
+        //check if parent is root
         if (isRoot(parent)) {
+            return;
+        }
+        //if any child of the parent is active the parent also has to be active
+        boolean parentIsActive = false;
+        for (T9Node<T9DataContainer> child : parent.getChildren()) {
+            if (child.getData().isActive()) {
+                parentIsActive = true;
+                break;
+            }
 
         }
-        if (node.getChildren() == null || node.getChildren().isEmpty()) {
-
+        //if all childs are inactive set parent as inactive and call this method again for the next higher level
+        if (!parentIsActive) {
+            parent.getData().setActive(false);
+            markPathAsInactive(parent);
         }
     }
 
@@ -107,7 +119,7 @@ public class T9Tree {
         return node.getData().getCharAsString().equals(root.getData().getCharAsString());
     }
 
-    private void updateProbability(T9Node<T9DataContainer> leaf) {
+    private void calcProbabilityForNode(T9Node<T9DataContainer> leaf) {
         double probability = 0;
         char c = leaf.getData().getChar();
         double historyProbability = 0;
@@ -163,13 +175,6 @@ public class T9Tree {
 
     }
 
-
-    public void printBestPaths(int pathcount) {
-        for (T9Node<T9DataContainer> leaf : getKBestPaths(pathcount)) {
-            System.out.println(getPathAsString(leaf));
-        }
-    }
-
     private ArrayList<T9Node<T9DataContainer>> getKBestPaths(int K) {
         //the best path is at the same time the path of the best leaf
         //search best leafs
@@ -212,10 +217,6 @@ public class T9Tree {
         }
 
         return returnval;
-    }
-
-    public void printTree() {
-        root.print();
     }
 
 
