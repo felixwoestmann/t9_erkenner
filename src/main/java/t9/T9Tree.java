@@ -3,6 +3,7 @@ package t9;
 import crawler.ProbabilityCalculator;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class T9Tree {
     private ArrayList<T9Node<T9DataContainer>> leafs = null;
@@ -19,9 +20,7 @@ public class T9Tree {
 
     public void processButton(char button) {
         //get a list of literals
-       final ArrayList<String> list =  T9Keyboard.mapButton(button);
-
-
+        final ArrayList<String> list = T9Keyboard.mapButton(button);
         //append every literal to every leaf if it is active
         leafs.forEach(leaf -> {
             if (leaf.getData().isActive()) {
@@ -32,13 +31,12 @@ public class T9Tree {
         });
         //update the list of leafs to the new leafs
         updateLeafs();
-
         //set Probability for every leaf
         leafs.forEach(this::calcProbabilityForNode);
 
         //mark unprobable leafs as inactive
         markLeafsInactive(5);
-        //try to mark as much of the path to a inactive leaf as inactive ,too
+        //mark as much of the path to a inactive leaf as inactive ,too
         leafs.forEach(leaf -> {
             if (!leaf.getData().isActive()) {
                 markPathAsInactive(leaf);
@@ -72,8 +70,6 @@ public class T9Tree {
             parent.getChildren().remove(node);
             cleanTreeFromInactiveNodes(parent);
         }
-
-
     }
 
 
@@ -81,14 +77,12 @@ public class T9Tree {
         ArrayList<T9Node<T9DataContainer>> kbestPaths = getKBestPaths(pathcount);
         ArrayList<T9Node<T9DataContainer>> bestSymbolPaths = getBestPathForEveryLeafSymbol();
 
-
         //mark all leafs as inactive whch are in neither of those lists
-        for (T9Node<T9DataContainer> leaf : leafs) {
+        leafs.forEach(leaf -> {
             if (!kbestPaths.contains(leaf) && !bestSymbolPaths.contains(leaf)) {
                 leaf.getData().setActive(false);
             }
-        }
-
+        });
     }
 
 
@@ -123,16 +117,15 @@ public class T9Tree {
         double probability = 0;
         char c = leaf.getData().getChar();
         double historyProbability = 0;
-        if (isRoot(leaf)) {
-            historyProbability = leaf.getData().getProbability();
+        if (!isRoot(leaf.getParent())) {
+            historyProbability = leaf.getParent().getData().getProbability();
         }
-
 
         //prob ln P (bn|b1...bn-1) prob of char with prefix
         double probOfCharWithPrefix = probCalc.probOfCharWithDefinedPrefix(leaf.getHistory(historySize), c);
         //prob ln P (tn|bn)
         double probOfPressedButton = probCalc.probOfPressedButtonAndChar(c);
-        //calc ln
+        //calc ln and invert
         probOfCharWithPrefix = Math.log(probOfCharWithPrefix) * -1;
         probOfPressedButton = Math.log(probOfPressedButton) * -1;
 
@@ -144,13 +137,12 @@ public class T9Tree {
     private void updateLeafs() {
         ArrayList<T9Node<T9DataContainer>> tmplist = new ArrayList<>();
 
-        for (T9Node<T9DataContainer> n : leafs) {
+        leafs.forEach(leaf -> {
             //just update leaf if node is active
-            if (n.getData().isActive()) {
-                tmplist.addAll(getLeafs(n));
+            if (leaf.getData().isActive()) {
+                tmplist.addAll(getLeafs(leaf));
             }
-
-        }
+        });
 
         leafs = tmplist;
     }
