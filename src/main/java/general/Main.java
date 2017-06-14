@@ -1,6 +1,7 @@
 package general;
 
 import crawler.*;
+import gui.Window;
 import t9.T9Tree;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
@@ -16,12 +17,13 @@ public class Main {
     private static String treeLocationPath = "./tree.json";
 
     public static void main(String args[]) throws IOException {
+
         TreeReader reader = new TreeReader();
         CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
         T9Tree inputTree = new T9Tree(probabilityCalculator, 2);
-        String input = "2333";
+        String input = "42883";
 
         for (int i = 0; i < input.length(); i++) {
             inputTree.processButton(input.charAt(i));
