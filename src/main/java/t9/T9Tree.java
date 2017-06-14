@@ -20,6 +20,7 @@ public class T9Tree {
 
 
     public void processButton(char button) {
+        System.out.println("Process button "+button);
         //get a list of literals
         final ArrayList<String> list = T9Keyboard.mapButton(button);
         //append every literal to every leaf if it is active
@@ -126,6 +127,7 @@ public class T9Tree {
             markPathAsInactive(parent);
         }
     }
+
 
     private boolean isRoot(T9Node<T9DataContainer> node) {
         return node.getData().getCharAsString().equals(root.getData().getCharAsString());
