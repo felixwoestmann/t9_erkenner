@@ -227,7 +227,6 @@ public class T9Tree {
 
 
         //print out the path of every leaf
-
         T9Node<T9DataContainer> actnode = node;
         while (!isRoot(actnode)) {
             String line = actnode.getData().getChar() + " : " + actnode.getData().getProbability() + "-->" + ("\n");
@@ -242,6 +241,33 @@ public class T9Tree {
         return returnval.toString();
     }
 
+
+    /**
+     * Returns the best guess for the typed word
+     * @return
+     */
+    public String getBestGuess() {
+        //sort leafs so it is sorted by path quality
+        leafs.sort((o1, o2) -> {
+            //since we have to return an integer we multiply the probability by 1000 to get more precise
+            double returnValue = o2.getData().getProbability() - o1.getData().getProbability();
+            return (int) (returnValue * 1000);
+        });
+
+        LinkedList<Character> bestguess = new LinkedList<>();
+
+        T9Node<T9DataContainer> actnode = leafs.get(0);
+        while (!isRoot(actnode)) {
+            bestguess.add( actnode.getData().getChar());
+            actnode = actnode.getParent();
+        }
+        Collections.reverse(bestguess);
+
+
+        StringBuilder returnval = new StringBuilder();
+        bestguess.forEach(returnval::append);
+        return returnval.toString();
+    }
 
     private ArrayList<T9Node<T9DataContainer>> getLeafs(T9Node<T9DataContainer> start) {
         ArrayList<T9Node<T9DataContainer>> leafs = new ArrayList<>();

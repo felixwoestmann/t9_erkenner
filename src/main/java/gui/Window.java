@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -28,9 +29,9 @@ public class Window extends Application {
     private T9Tree tree;
     // ui components
     private Stage primaryStage;
-    private SplitPane rootLayout;
-    GridPane textgrid;
-    GridPane keyboardgrid;
+    private TextField bestguessText;
+    private TextField buttonsPressed;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -46,7 +47,7 @@ public class Window extends Application {
             FXMLLoader loader = new FXMLLoader();
             URL url = Window.class.getResource("t9keyboard.fxml");
             loader.setLocation(url);
-            rootLayout = loader.load();
+            SplitPane rootLayout = loader.load();
 
             //show scene
             Scene scene = new Scene(rootLayout);
@@ -54,11 +55,22 @@ public class Window extends Application {
             primaryStage.show();
 
             //load ui components for programmatic access
-            textgrid  = (GridPane) ((AnchorPane) rootLayout.getItems().get(0)).getChildren().get(0);
-            keyboardgrid  = (GridPane) ((AnchorPane) rootLayout.getItems().get(1)).getChildren().get(0);
+            GridPane textgrid = (GridPane) ((AnchorPane) rootLayout.getItems().get(0)).getChildren().get(0);
+            GridPane keyboardgrid = (GridPane) ((AnchorPane) rootLayout.getItems().get(1)).getChildren().get(0);
 
-            //adds a eventhandler for each button which gets the text of the button a forwards it to the tree
-            keyboardgrid.getChildren().forEach(node -> ((Button) node).setOnAction(event -> tree.processButton(((Button)event.getSource()).getText().charAt(0))));
+            bestguessText = (TextField) textgrid.getChildren().get(3);
+            buttonsPressed = (TextField) textgrid.getChildren().get(2);
+            /*
+            * adds a eventhandler for each button which gets the text of the button a forwards it to the tree
+            * then it displays the best guess
+            * and displays which buttons were pressed
+            */
+            keyboardgrid.getChildren().forEach(node -> ((Button) node).setOnAction(event -> {
+                char buttonchar = ((Button) event.getSource()).getText().charAt(0);
+                tree.processButton(buttonchar);
+                bestguessText.setText(tree.getBestGuess());
+                buttonsPressed.setText(buttonsPressed.getText() + buttonchar);
+            }));
 
         } catch (IOException e) {
             e.printStackTrace();
