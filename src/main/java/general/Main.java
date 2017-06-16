@@ -19,7 +19,7 @@ public class Main {
     public static void main(String args[]) throws IOException {
 
         TreeReader reader = new TreeReader();
-        CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
+        CrawlerTree parseTree = reader.getTreeFromFile(treeLocationPath);
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
         T9Tree inputTree = new T9Tree(probabilityCalculator, 2);

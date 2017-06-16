@@ -22,18 +22,18 @@ public class TestTreeWriter {
 
 
         CrawlerTree wikipediaTree = new CrawlerTree(3);
-        WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
 
         TreeWriter writer = new TreeWriter(wikipediaTree);
         writer.writeToFile("./tree_3.json");
 
         wikipediaTree=new CrawlerTree(4);
-        WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
         writer=new TreeWriter(wikipediaTree);
         writer.writeToFile("./tree_4.json");
 
         wikipediaTree=new CrawlerTree(5);
-        WikiDumpReader.processWikiDump(wikipediaTree, "/home/lostincoding/Schreibtisch/wikidump-out/whole");
+        WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
         writer=new TreeWriter(wikipediaTree);
         writer.writeToFile("./tree_5.json");
 
