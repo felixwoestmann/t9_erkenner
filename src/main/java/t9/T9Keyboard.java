@@ -7,6 +7,20 @@ import java.util.ArrayList;
  */
 public class T9Keyboard {
 
+public static ArrayList<Character> mapStringToButtons(String input) {
+    ArrayList<Character> output=new ArrayList<>();
+    char buttons[] = {'1','2','3','4','5','6','7','8','9'};
+    for (char input_char : input.toCharArray()) {
+        for (char button : buttons) {
+            if (mapButton(button).contains(input_char + "")) {
+                output.add(button);
+                break;
+            }
+        }
+    }
+
+    return output;
+}
 
     public static ArrayList<String> mapButton(char button) throws IllegalArgumentException {
 

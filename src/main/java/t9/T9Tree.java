@@ -20,7 +20,7 @@ public class T9Tree {
 
 
     public void processButton(char button) {
-        System.out.println("Process button "+button);
+        //     System.out.println("Process button "+button);
         //get a list of literals
         final ArrayList<String> list = T9Keyboard.mapButton(button);
         //append every literal to every leaf if it is active
@@ -66,14 +66,15 @@ public class T9Tree {
      * Method prepares the tree for a new word
      */
     public void newWord() {
-        T9Node<T9DataContainer> newroot=new T9Node<>(new T9DataContainer(-1,"root"));
-        root=newroot;
+        T9Node<T9DataContainer> newroot = new T9Node<>(new T9DataContainer(-1, "root"));
+        root = newroot;
         leafs = getLeafs(root);
     }
 
     /**
      * Removes all nodes which are inactive.
      * Starts at bottom and works its way up
+     *
      * @param node
      */
     private void cleanTreeFromInactiveNodes(T9Node<T9DataContainer> node) {
@@ -91,8 +92,9 @@ public class T9Tree {
      * - in the best K paths (K is a positive integer)
      * OR
      * - the best path which ends in that symbol
-     *
+     * <p>
      * compare P11
+     *
      * @param pathcount
      */
     private void markLeafsInactive(int pathcount) {
@@ -111,8 +113,9 @@ public class T9Tree {
     /**
      * Method gets a node and works its way up from the bottom
      * If all childs of the parent node are inactive the parent node is set inactive too
-     *
+     * <p>
      * Stops if a parent node can't be set as inactive
+     *
      * @param node
      */
     private void markPathAsInactive(T9Node<T9DataContainer> node) {
@@ -190,7 +193,7 @@ public class T9Tree {
                 map.put(character, leaf);
                 break;
             }
-            if (bestNode.getData().getProbability() >    leaf.getData().getProbability()) {
+            if (bestNode.getData().getProbability() > leaf.getData().getProbability()) {
                 map.put(character, leaf);
             }
 
@@ -202,6 +205,7 @@ public class T9Tree {
     /**
      * Returns a list of the K best paths.
      * If K=10 then you get the 10 best paths
+     *
      * @param K
      * @return
      */
@@ -229,6 +233,7 @@ public class T9Tree {
 
     /**
      * Returns the path from the given node to the root node as String
+     *
      * @param node
      * @return
      */
@@ -253,6 +258,7 @@ public class T9Tree {
 
     /**
      * Returns the best guess for the typed word
+     *
      * @return
      */
     public String getBestGuess() {
@@ -261,9 +267,9 @@ public class T9Tree {
 
         LinkedList<Character> bestguess = new LinkedList<>();
 
-        T9Node<T9DataContainer> actnode =  getKBestPaths(1).get(0);
+        T9Node<T9DataContainer> actnode = getKBestPaths(1).get(0);
         while (!isRoot(actnode)) {
-            bestguess.add( actnode.getData().getChar());
+            bestguess.add(actnode.getData().getChar());
             actnode = actnode.getParent();
         }
         Collections.reverse(bestguess);
