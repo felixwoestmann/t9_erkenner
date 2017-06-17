@@ -4,11 +4,9 @@ import crawler.CrawlerTree;
 import crawler.ProbabilityCalculator;
 import crawler.TreeReader;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
@@ -17,10 +15,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import t9.T9Tree;
+import utility.TimeUnit;
+import utility.Timer;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.function.Consumer;
 
 /**
  * Created by lostincoding on 13.06.17.
@@ -36,10 +35,12 @@ public class Window extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("T9 Erkenner");
-        initRootLayout();
-        //load t9 tree
+
         initTree();
+        initRootLayout();
     }
+
+
 
     private void initRootLayout() {
         try {
@@ -60,6 +61,18 @@ public class Window extends Application {
 
             bestguessText = (TextField) textgrid.getChildren().get(3);
             buttonsPressed = (TextField) textgrid.getChildren().get(2);
+            Button newword=(Button) textgrid.getChildren().get(4);
+
+
+            //set action for "new word" button
+            newword.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    tree.newWord();
+                    bestguessText.setText("");
+                    buttonsPressed.setText("");
+                }
+            });
             /*
             * adds a eventhandler for each button which gets the text of the button a forwards it to the tree
             * then it displays the best guess
@@ -72,6 +85,8 @@ public class Window extends Application {
                 buttonsPressed.setText(buttonsPressed.getText() + buttonchar);
             }));
 
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,7 +98,16 @@ public class Window extends Application {
 
     private void initTree() throws IOException {
         TreeReader reader = new TreeReader();
+        Timer timer=new Timer();
+
+        System.out.println("Load persisted Tree");
+        timer.start();
         CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
+        timer.stop();
+        System.out.print("Loading the persisted tree took ");
+        timer.printTime(TimeUnit.MILLISECONDS);
+        System.out.print(" milliseconds.\n");
+
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
         tree = new T9Tree(probabilityCalculator, 2);

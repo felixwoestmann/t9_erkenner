@@ -63,6 +63,15 @@ public class T9Tree {
     }
 
     /**
+     * Method prepares the tree for a new word
+     */
+    public void newWord() {
+        T9Node<T9DataContainer> newroot=new T9Node<>(new T9DataContainer(-1,"root"));
+        root=newroot;
+        leafs = getLeafs(root);
+    }
+
+    /**
      * Removes all nodes which are inactive.
      * Starts at bottom and works its way up
      * @param node
@@ -97,6 +106,7 @@ public class T9Tree {
             }
         });
     }
+
 
     /**
      * Method gets a node and works its way up from the bottom
@@ -133,7 +143,6 @@ public class T9Tree {
         return node.getData().getCharAsString().equals(root.getData().getCharAsString());
     }
 
-
     private void calcProbabilityForNode(T9Node<T9DataContainer> leaf) {
         double probability;
         char c = leaf.getData().getChar();
@@ -169,6 +178,7 @@ public class T9Tree {
         leafs = tmplist;
     }
 
+
     private ArrayList<T9Node<T9DataContainer>> getBestPathForEveryLeafSymbol() {
         HashMap<String, T9Node<T9DataContainer>> map = new HashMap<>();
 
@@ -180,7 +190,7 @@ public class T9Tree {
                 map.put(character, leaf);
                 break;
             }
-            if (bestNode.getData().getProbability() < leaf.getData().getProbability()) {
+            if (bestNode.getData().getProbability() >    leaf.getData().getProbability()) {
                 map.put(character, leaf);
             }
 
@@ -188,7 +198,6 @@ public class T9Tree {
         return new ArrayList<>(map.values());
 
     }
-
 
     /**
      * Returns a list of the K best paths.
@@ -203,7 +212,7 @@ public class T9Tree {
         //sort leafs so it is sorted by path quality
         leafs.sort((o1, o2) -> {
             //since we have to return an integer we multiply the probability by 1000 to get more precise
-            double returnValue = o2.getData().getProbability() - o1.getData().getProbability();
+            double returnValue = o1.getData().getProbability() - o2.getData().getProbability();
             return (int) (returnValue * 1000);
         });
 
@@ -216,6 +225,7 @@ public class T9Tree {
 
 
     }
+
 
     /**
      * Returns the path from the given node to the root node as String
@@ -241,22 +251,17 @@ public class T9Tree {
         return returnval.toString();
     }
 
-
     /**
      * Returns the best guess for the typed word
      * @return
      */
     public String getBestGuess() {
         //sort leafs so it is sorted by path quality
-        leafs.sort((o1, o2) -> {
-            //since we have to return an integer we multiply the probability by 1000 to get more precise
-            double returnValue = o2.getData().getProbability() - o1.getData().getProbability();
-            return (int) (returnValue * 1000);
-        });
+
 
         LinkedList<Character> bestguess = new LinkedList<>();
 
-        T9Node<T9DataContainer> actnode = leafs.get(0);
+        T9Node<T9DataContainer> actnode =  getKBestPaths(1).get(0);
         while (!isRoot(actnode)) {
             bestguess.add( actnode.getData().getChar());
             actnode = actnode.getParent();
@@ -281,6 +286,5 @@ public class T9Tree {
 
         return leafs;
     }
-
 
 }
