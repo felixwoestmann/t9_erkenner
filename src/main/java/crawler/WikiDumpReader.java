@@ -7,6 +7,7 @@ import utility.Timer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * Created by lostincoding on 09.05.17
@@ -37,6 +38,52 @@ public class WikiDumpReader {
 
         timer.stop();
         System.out.println("Processing wiki dump took " + timer.getTime(TimeUnit.SECONDS) + " seconds");
+    }
+
+    /**
+     * Returns a list of words from a wiki dir
+     * remove all space,.üäö
+     * ans turns it to lower case
+     * @param path
+     * @return
+     */
+
+    public static LinkedList<String> getWords(String path) {
+        File wikidumpdir = new File(path);
+        LinkedList<String> list=new LinkedList<>();
+
+
+        if (!wikidumpdir.isDirectory()) {
+            throw new IllegalArgumentException("Error: Path has to be directory");
+        }
+
+        File[] dircontent = wikidumpdir.listFiles();
+        assert dircontent != null;
+        for (File file : dircontent) {
+            if (file.isDirectory()) {
+                for (String s : processDirectory(file).toLowerCase().split(" ")) {
+                    s=s.trim();
+                    boolean containsinvalidchars=false;
+
+                    for (char c : s.toCharArray()) {
+                        if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') ){
+                            containsinvalidchars=true;
+                            break;
+                        }
+                    }
+
+                    if (!containsinvalidchars) {
+                        if (!list.contains(s)) {
+                            list.add(s);
+                        }
+
+                    }
+                }
+
+            }
+        }
+        return list;
+
     }
 
 

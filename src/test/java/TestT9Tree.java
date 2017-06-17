@@ -1,6 +1,7 @@
 import crawler.CrawlerTree;
 import crawler.ProbabilityCalculator;
 import crawler.TreeReader;
+import crawler.WikiDumpReader;
 import org.junit.Test;
 import t9.T9Keyboard;
 import t9.T9Tree;
@@ -21,18 +22,10 @@ public class TestT9Tree {
     @Test
     public void testErrorRate() throws IOException {
         T9Tree tree = initTree();
+        LinkedList<String> words=loadWordFile("words.txt");
 
-        LinkedList<String> words = new LinkedList<>();
-        File wordfile = new File("30k-words.txt");
-        BufferedReader br = new BufferedReader(new FileReader(wordfile));
-        String line;
-        while ((line = br.readLine()) != null) {
-            words.add(line.toLowerCase());
-        }
-
+        double diff = 0;
         double countTotal = 0;
-        double countSuccess = 0;
-        double countFailure = 0;
 
         for (String word : words) {
             //translate every string to button presses
@@ -46,18 +39,13 @@ public class TestT9Tree {
                 continue;
             }
 
-            countTotal++;
+            countTotal+=word.length();
             //check if result matches
-            if (word.equals(tree.getBestGuess())) {
-                countSuccess++;
-            } else {
-                countFailure++;
-            }
+            diff += calcWordDifference(word, tree.getBestGuess());
             tree.newWord();
         }
 
-        System.out.format("Processed: %d\nSuccess: %d\nFailure: %d\n\n\n", (int) countTotal, (int) countSuccess, (int) countFailure);
-        System.out.format("Sucess Rate: %f\nFailure Rate: %f\n", countSuccess / countTotal, countFailure / countTotal);
+        System.out.format("Error Rate: %f", diff / countTotal);
     }
 
     private T9Tree initTree() throws IOException {
@@ -71,8 +59,9 @@ public class TestT9Tree {
         char[] oneArr = one.toCharArray();
         char[] twoArr = two.toCharArray();
         int length = max(oneArr.length, twoArr.length);
+
         for (int i = 0; i < length; i++) {
-            if (i > oneArr.length || i > twoArr.length) {
+            if (i > oneArr.length - 1 || i > twoArr.length - 1) {
                 diff++;
                 continue;
             }
@@ -83,4 +72,22 @@ public class TestT9Tree {
         return diff;
     }
 
+
+    private LinkedList<String > loadWordFile(String path) throws IOException {
+        LinkedList<String> list=new LinkedList<>();
+
+        BufferedReader reader=new BufferedReader(new FileReader(new File(path)));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            list.add(line);
+        }
+        return list;
+    }
+    private void writeWikiStringToFile(String wikidir,String out) throws FileNotFoundException {
+        LinkedList<String> words=WikiDumpReader.getWords(wikidir);
+        PrintWriter printWriter=new PrintWriter(out);
+        words.forEach(printWriter::println);
+        printWriter.close();
+        System.out.println(words.size()+" Word were printed");
+    }
 }
