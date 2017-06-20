@@ -1,11 +1,6 @@
 package crawler;
 
-import crawler.CrawlerNode;
-import crawler.CrawlerTree;
-import crawler.DataContainer;
-
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 /**
  * Created by lostincoding on 23.05.17.
@@ -51,18 +46,21 @@ public class ProbabilityCalculator {
         return overallProbability;
     }
 
-    public double probOfString(String string) {
+    public double probabilityOfString(String string) {
         string = string.toLowerCase();
         if (string.length() < tree.getChunkSize()) {
             return probOfStringShorterThanChunkSize(string);
         }
 
         double overallProbability = 1;
+        double prob;
 
-        for (int i = 0; i <= string.length() - tree.getChunkSize(); i++) {
-            String substring = string.substring(i, i + tree.getChunkSize());
-            double prob = probOfStringShorterThanChunkSize(substring);
+        for (int i = 1; i <= string.length(); i++) {
+            int startIndex = i - tree.getChunkSize() < 0 ? 0 : i - tree.getChunkSize();
+            String substring = string.substring(startIndex, i);
+            prob = conditionalProbabilityOfLastChar(substring);
             overallProbability *= prob;
+            // System.out.format("Sub: %s Char: %c Prob: %f, overallProb: %f\n", substring, substring.charAt(substring.length() - 1), prob, overallProbability);
         }
 
         return overallProbability;
@@ -86,6 +84,21 @@ public class ProbabilityCalculator {
         double completeProb = probOfStringShorterThanChunkSize(complete);
         double prefixProb = probOfStringShorterThanChunkSize(prefix);
         return completeProb / prefixProb;
+    }
+
+    public double conditionalProbabilityOfLastChar(String string) {
+        // Only use the last n chars for the condition, with n = chunksize
+        string = string.length() < tree.getChunkSize() ? string : string.substring(string.length() - tree.getChunkSize());
+        CrawlerNode node = tree.getRoot();
+        for (int i = 0; i < string.length() - 1; i++) {
+            for (CrawlerNode child : node.getChildren()) {
+                if (child.getData().getChar() == string.charAt(i)) {
+                    node = child;
+                    break;
+                }
+            }
+        }
+        return getProbOfCharOnLevel(node, string.charAt(string.length() - 1));
     }
 
     private double getProbOfCharOnLevel(CrawlerNode node, char c) {

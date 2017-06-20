@@ -40,15 +40,17 @@ public class ProbCalcWithInputStringTest {
     @Test
     public void testProbabilityOfStringShorterThanChunkSize() {
         Assert.assertTrue("Chunksize too small", 2 <= t.getChunkSize());
-        Assert.assertEquals("Probability of \"an\" calculated wrong", (double) 2 / 4 * (4 / (double) 70), c.probOfString("an"), DELTA);
-        Assert.assertEquals("Probability of \"er\" calculated wrong", (double) 3 / 8 * (8 / (double) 70), c.probOfString("er"), DELTA);
-        Assert.assertEquals("Probability of \"qu\" calculated wrong", (double) 1 / 1 * (1 / (double) 70), c.probOfString("qu"), DELTA);
+        Assert.assertEquals("Probability of \"an\" calculated wrong", (double) 2 / 4 * (4 / (double) 70), c.probabilityOfString("an"), DELTA);
+        Assert.assertEquals("Probability of \"er\" calculated wrong", (double) 3 / 8 * (8 / (double) 70), c.probabilityOfString("er"), DELTA);
+        Assert.assertEquals("Probability of \"qu\" calculated wrong", (double) 1 / 1 * (1 / (double) 70), c.probabilityOfString("qu"), DELTA);
     }
 
     @Test
     public void testProbabilityOfString() {
-        double p_anl = (1 / 2.0 * 2 / 4.0 * 4 / 70.0);
-        double p_nle = (1 / 1.0 * 1 / 6.0 * 6 / 70.0);
-        Assert.assertEquals(p_anl * p_nle, c.probOfString("anle"), DELTA);
+        double p_a = (4 / 70.0);
+        double p_an = (2 / 4.0);
+        double p_anl = (1 / 2.0);
+        double p_nle = (1.0);
+        Assert.assertEquals(p_a * p_an * p_anl * p_nle, c.probabilityOfString("anle"), DELTA);
     }
 }

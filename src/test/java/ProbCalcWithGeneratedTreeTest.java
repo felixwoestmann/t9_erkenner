@@ -17,7 +17,7 @@ public class ProbCalcWithGeneratedTreeTest {
     public void testProbabilityForGivenStringLongerThanChunkSize() {
         String s;
         s = "wet";
-        double probOfWet = c.probOfString(s);
+        double probOfWet = c.probabilityOfString(s);
         System.out.format("P(%s):  %g\n", s, probOfWet);
         String prefix = "et";
         char c = 't';
@@ -25,15 +25,21 @@ public class ProbCalcWithGeneratedTreeTest {
         System.out.format("P(t|et): %g\n", probOfTUnderPrefixET);
         System.out.format("P(%s) * P(%c|%s):\n\t\t %g\n", s, c, prefix, probOfWet * probOfTUnderPrefixET);
         s = "wett";
-        double probOfWett = ProbCalcWithGeneratedTreeTest.c.probOfString(s);
+        double probOfWett = ProbCalcWithGeneratedTreeTest.c.probabilityOfString(s);
         System.out.format("P(%s): %g\n", s, probOfWett);
-        Assert.assertEquals(probOfWet*probOfTUnderPrefixET, probOfWett, 1.0E-6);
+        Assert.assertEquals(probOfWet * probOfTUnderPrefixET, probOfWett, 1.0E-6);
+    }
+
+    @Test
+    public void testCondProb() {
+        String s = "Hallo";
+        System.out.format("%s\n%.3g\n", s, c.conditionalProbabilityOfLastChar(s));
     }
 
     @Test
     public void testGivenStringInWikiFileTree() {
         String s = "In Steinfurt regnet es fast nie";
-        System.out.format("%s\n%.3g\n", s, c.probOfString(s));
+        System.out.format("%s\n%.3g\n", s, c.probabilityOfString(s));
         System.out.format("By Log calculation\n%.3g\n", c.probOfStringByLogProduct(s));
     }
 }
