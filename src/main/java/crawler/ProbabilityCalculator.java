@@ -70,9 +70,11 @@ public class ProbabilityCalculator {
         string = string.toLowerCase();
 
         double overallProbability = 0;
-        for (int i = 0; i <= string.length() - tree.getChunkSize(); i++) {
-            String substring = string.substring(i, i + tree.getChunkSize());
-            double prob = probOfStringShorterThanChunkSize(substring);
+        double prob;
+        for (int i = 1; i <= string.length(); i++) {
+            int startIndex = i - tree.getChunkSize() < 0 ? 0 : i - tree.getChunkSize();
+            String substring = string.substring(startIndex, i);
+            prob = conditionalProbabilityOfLastChar(substring);
             overallProbability += Math.log(prob);
         }
 
