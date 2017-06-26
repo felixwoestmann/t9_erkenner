@@ -9,7 +9,9 @@ import t9.T9Tree;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.max;
@@ -110,14 +112,32 @@ public class TestT9Tree {
 
     @Test
     public void testForPathCountAndHistorySize() throws IOException {
+        final class Container {
+            private final int pathCount;
+            private final int historysize;
+            private final double errorRate;
+
+            private Container(int pathCount, int historysize, double errorRate) {
+                this.pathCount = pathCount;
+                this.historysize = historysize;
+                this.errorRate = errorRate;
+            }
+        }
+
         short[] pathcounts = {5, 10, 50, 100};
         int[] historysizes = {3, 4, 5};
+        List<Container> errorRates = new ArrayList<>();
 
-        System.out.format("Path | History | Error Rate\n-----+---------+-----------\n");
         for (short pathcount : pathcounts) {
             for (int historysize : historysizes) {
-                System.out.format("%3d  |    %1d    | %.4f\n", pathcount, historysize, testErrorRate(historysize, pathcount));
+                errorRates.add(new Container(pathcount, historysize, testErrorRate(historysize, pathcount)));
             }
+        }
+
+        errorRates.sort(Comparator.comparingDouble(c -> c.errorRate));
+        System.out.format("Path | History | Error Rate\n-----+---------+-----------\n");
+        for (Container c : errorRates) {
+            System.out.format("%3d  |    %1d    | %.4f\n", c.pathCount, c.historysize, c.errorRate);
         }
     }
 
