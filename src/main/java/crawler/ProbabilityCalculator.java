@@ -7,12 +7,15 @@ import java.util.ArrayList;
  */
 public class ProbabilityCalculator {
     private CrawlerTree tree;
-    private final double CORRECTBUTTONPROB = 0.95;
+    private final double CORRECTBUTTONPROB = 1;
 
     public ProbabilityCalculator(CrawlerTree tree) {
         this.tree = tree;
     }
 
+    public final int getTreeChunksize() {
+        return tree.getChunkSize();
+    }
 
     public double probOfChar(char c) {
         return getProbOfCharOnLevel(tree.getRoot(), c);
@@ -48,37 +51,19 @@ public class ProbabilityCalculator {
 
     public double probabilityOfString(String string) {
         string = string.toLowerCase();
-        if (string.length() < tree.getChunkSize()) {
-            return probOfStringShorterThanChunkSize(string);
-        }
-
-        double overallProbability = 1;
-        double prob;
-
-        for (int i = 1; i <= string.length(); i++) {
-            int startIndex = i - tree.getChunkSize() < 0 ? 0 : i - tree.getChunkSize();
-            String substring = string.substring(startIndex, i);
-            prob = conditionalProbabilityOfLastChar(substring);
-            overallProbability *= prob;
-            // System.out.format("Sub: %s Char: %c Prob: %f, overallProb: %f\n", substring, substring.charAt(substring.length() - 1), prob, overallProbability);
-        }
-
-        return overallProbability;
-    }
-
-    public double probOfStringByLogProduct(String string) {
-        string = string.toLowerCase();
 
         double overallProbability = 0;
         double prob;
+
         for (int i = 1; i <= string.length(); i++) {
             int startIndex = i - tree.getChunkSize() < 0 ? 0 : i - tree.getChunkSize();
             String substring = string.substring(startIndex, i);
-            prob = conditionalProbabilityOfLastChar(substring);
-            overallProbability += Math.log(prob);
+            prob = -Math.log(conditionalProbabilityOfLastChar(substring));
+            overallProbability += prob;
+            // System.out.format("Sub: %s P(%c|%s): %f, overallProb: %g\n", substring, substring.charAt(substring.length() - 1), substring.substring(0, substring.length() - 1), prob, overallProbability);
         }
 
-        return Math.exp(overallProbability);
+        return overallProbability;
     }
 
     public double probOfCharWithDefinedPrefix(String prefix, char c) {
