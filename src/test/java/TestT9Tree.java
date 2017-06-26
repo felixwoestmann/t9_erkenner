@@ -82,13 +82,9 @@ public class TestT9Tree {
         T9Tree tree;
         TreeReader reader = new TreeReader();
         CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
-        ProbabilityCalculator c = new ProbabilityCalculator(parseTree);
         LinkedList<String> words = loadWordFile("words.txt");
         List<Container> probabilities = new ArrayList<>();
 
-        System.out.println("+-----+------------+");
-        System.out.println("|  k  | Error Rate |");
-        System.out.println("+=====+============+");
         for (short i : new short[]{2, 4, 6, 8, 10, 15, 20, 50, 100}) {
 //        for (short i = 2; i <= 100; i++) {
             tree = new T9Tree(new ProbabilityCalculator(parseTree), i);
@@ -108,8 +104,14 @@ public class TestT9Tree {
                 //check if result matches
                 diff += calcWordDifference(word, tree.getBestGuess());
             }
-            System.out.format("| %3d |   %5.2f%%   |\n", i, diff / countTotal * 100);
             probabilities.add(new Container(i, diff / countTotal));
+        }
+
+        System.out.println("+-----+------------+");
+        System.out.println("|  k  | Error Rate |");
+        System.out.println("+=====+============+");
+        for (Container c : probabilities) {
+            System.out.format("| %3d |   %5.2f%%   |\n", c.key, c.error * 100);
         }
         System.out.println("+-----+------------+\n");
 
