@@ -20,7 +20,7 @@ import static java.lang.Integer.max;
  * Created by lostincoding on 17.06.17.
  */
 public class TestT9Tree {
-    private double testErrorRate(int historysize, short pathcount) throws IOException {
+    private double testErrorRate(short historysize, short pathcount) throws IOException {
         T9Tree tree = initTree(historysize, pathcount);
         LinkedList<String> words = loadWordFile("words.txt");
 
@@ -50,7 +50,7 @@ public class TestT9Tree {
 
     @Test
     public void testParseTree() throws IOException {
-        T9Tree tree = initTree();
+        T9Tree tree = initTree((short) 3, (short) 2);
         TreeReader reader = new TreeReader();
         CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
         ProbabilityCalculator c = new ProbabilityCalculator(parseTree);
@@ -125,11 +125,11 @@ public class TestT9Tree {
         }
 
         short[] pathcounts = {5, 10, 50, 100};
-        int[] historysizes = {3, 4, 5};
+        short[] historysizes = {3, 4, 5};
         List<Container> errorRates = new ArrayList<>();
 
         for (short pathcount : pathcounts) {
-            for (int historysize : historysizes) {
+            for (short historysize : historysizes) {
                 errorRates.add(new Container(pathcount, historysize, testErrorRate(historysize, pathcount)));
             }
         }
@@ -141,20 +141,10 @@ public class TestT9Tree {
         }
     }
 
-    private T9Tree initTree() throws IOException {
-        return this.initTree((short) 2);
-    }
-
-    private T9Tree initTree(int historysize, short pathcount) throws IOException {
+    private T9Tree initTree(short historysize, short pathcount) throws IOException {
         TreeReader reader = new TreeReader();
         CrawlerTree parseTree = reader.getTreeFromFile(String.format("tree_%d.json", historysize));
         return new T9Tree(new ProbabilityCalculator(parseTree), pathcount);
-    }
-
-    private T9Tree initTree(short kPathCount) throws IOException {
-        TreeReader reader = new TreeReader();
-        CrawlerTree parseTree = reader.getTreeFromFile("tree_3.json");
-        return new T9Tree(new ProbabilityCalculator(parseTree), kPathCount);
     }
 
     private int calcWordDifference(String one, String two) {
