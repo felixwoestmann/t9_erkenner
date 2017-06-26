@@ -18,9 +18,8 @@ import static java.lang.Integer.max;
  * Created by lostincoding on 17.06.17.
  */
 public class TestT9Tree {
-    @Test
-    public void testErrorRate() throws IOException {
-        T9Tree tree = initTree();
+    private double testErrorRate(int historysize, short pathcount) throws IOException {
+        T9Tree tree = initTree(historysize, pathcount);
         LinkedList<String> words = loadWordFile("words.txt");
 
         double diff = 0;
@@ -44,7 +43,7 @@ public class TestT9Tree {
             tree.newWord();
         }
 
-        System.out.format("Error Rate: %.2f%%\n", diff / countTotal * 100);
+        return diff / countTotal;
     }
 
     @Test
@@ -109,8 +108,27 @@ public class TestT9Tree {
         System.out.format("Min: %4.2f%% at k=%d", (min != null ? min.getValue() : 0) * 100, min.getKey());
     }
 
+    @Test
+    public void testForPathCountAndHistorySize() throws IOException {
+        short[] pathcounts = {5, 10, 50, 100};
+        int[] historysizes = {3, 4, 5};
+
+        System.out.format("Path | History | Error Rate\n-----+---------+-----------\n");
+        for (short pathcount : pathcounts) {
+            for (int historysize : historysizes) {
+                System.out.format("%3d  |    %1d    | %.4f\n", pathcount, historysize, testErrorRate(historysize, pathcount));
+            }
+        }
+    }
+
     private T9Tree initTree() throws IOException {
         return this.initTree((short) 2);
+    }
+
+    private T9Tree initTree(int historysize, short pathcount) throws IOException {
+        TreeReader reader = new TreeReader();
+        CrawlerTree parseTree = reader.getTreeFromFile(String.format("tree_%d.json", historysize));
+        return new T9Tree(new ProbabilityCalculator(parseTree), pathcount);
     }
 
     private T9Tree initTree(short kPathCount) throws IOException {
