@@ -155,15 +155,7 @@ public class T9Tree {
     private void calcProbabilityForNode(T9Node<T9DataContainer> leaf) {
         double probability;
         char c = leaf.getData().getChar();
-        double historyProbability = 0;
-
-        T9Node<T9DataContainer> historyLeaf = leaf;
-        for (int i = 0; i < probCalc.getTreeChunksize(); i++) {
-            if (!isRoot(historyLeaf)) {
-                historyProbability += historyLeaf.getData().getProbability();
-                historyLeaf = historyLeaf.getParent();
-            }
-        }
+        double historyProbability = leaf.getParent() == root ? 0 : leaf.getParent().getData().getProbability();
 
         //prob ln P (bn|b1...bn-1) prob of char with prefix
         double probOfCharWithPrefix;
