@@ -20,7 +20,7 @@ import static java.lang.Integer.max;
 public class TestT9Tree {
     private double testErrorRate(short historysize, short pathcount) throws IOException {
         T9Tree tree = initTree(historysize, pathcount);
-        LinkedList<String> words = loadWordFile("words.txt");
+        List<String> words = loadWordFile("words.txt");
 
         double diff = 0;
         double countTotal = 0;
@@ -82,7 +82,7 @@ public class TestT9Tree {
         T9Tree tree;
         TreeReader reader = new TreeReader();
         CrawlerTree parseTree = reader.getTreeFromFile("tree_5.json");
-        LinkedList<String> words = loadWordFile("words.txt");
+        List<String> words = loadWordFile("words.txt");
         List<Container> probabilities = new ArrayList<>();
 
         for (short i : new short[]{2, 4, 6, 8, 10, 15, 20, 50, 100}) {
@@ -135,7 +135,7 @@ public class TestT9Tree {
         }
 
         short[] pathcounts = {5, 10, 50, 100};
-        short[] historysizes = {3, 4, 5};
+        short[] historysizes = {2, 3, 4, 5, 6};
         List<Container> errorRates = new ArrayList<>();
 
         for (short pathcount : pathcounts) {
@@ -148,6 +148,28 @@ public class TestT9Tree {
         System.out.format("Path | History | Error Rate\n-----+---------+-----------\n");
         for (Container c : errorRates) {
             System.out.format("%3d  |    %1d    | %.4f\n", c.pathCount, c.historysize, c.errorRate);
+        }
+    }
+
+    @Test
+    public void testGenerationOfWikiWordList() {
+        try {
+            /*
+             * wikidump-test only contains these folders from the entire dump:
+             * AE
+             * AJ
+             * AO
+             * AT
+             * AY
+             * BD
+             * BI
+             * BN
+             * BS
+             * @see TestTreeWriter#testWriteToFileForDifferentChunkSizes
+             */
+            writeWikiStringToFile("../wikidump-test", "wikiWordList.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -175,9 +197,8 @@ public class TestT9Tree {
         return diff;
     }
 
-
-    private LinkedList<String> loadWordFile(String path) throws IOException {
-        LinkedList<String> list = new LinkedList<>();
+    private List<String> loadWordFile(String path) throws IOException {
+        List<String> list = new LinkedList<>();
 
         BufferedReader reader = new BufferedReader(new FileReader(new File(path)));
         String line;
@@ -188,10 +209,10 @@ public class TestT9Tree {
     }
 
     private void writeWikiStringToFile(String wikidir, String out) throws FileNotFoundException {
-        LinkedList<String> words = WikiDumpReader.getWords(wikidir);
+        List<String> words = WikiDumpReader.getWords(wikidir);
         PrintWriter printWriter = new PrintWriter(out);
         words.forEach(printWriter::println);
         printWriter.close();
-        System.out.println(words.size() + " Word were printed");
+        System.out.println(words.size() + " Words were printed");
     }
 }

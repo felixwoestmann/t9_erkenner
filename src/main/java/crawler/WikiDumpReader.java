@@ -7,6 +7,7 @@ import utility.Timer;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by lostincoding on 09.05.17
@@ -42,15 +43,15 @@ public class WikiDumpReader {
     /**
      * Returns a list of words from a wiki dir
      * remove all space,.üäö
-     * ans turns it to lower case
+     * and turns it to lower case
      *
      * @param path
      * @return
      */
 
-    public static LinkedList<String> getWords(String path) {
+    public static List<String> getWords(String path) {
         File wikidumpdir = new File(path);
-        LinkedList<String> list = new LinkedList<>();
+        List<String> list = new LinkedList<>();
 
 
         if (!wikidumpdir.isDirectory()) {
