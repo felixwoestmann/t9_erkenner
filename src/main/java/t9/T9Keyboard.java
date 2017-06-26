@@ -7,20 +7,25 @@ import java.util.ArrayList;
  */
 public class T9Keyboard {
 
-public static ArrayList<Character> mapStringToButtons(String input) {
-    ArrayList<Character> output=new ArrayList<>();
-    char buttons[] = {'1','2','3','4','5','6','7','8','9'};
-    for (char input_char : input.toCharArray()) {
-        for (char button : buttons) {
-            if (mapButton(button).contains(input_char + "")) {
-                output.add(button);
-                break;
-            }
+    public static ArrayList<Character> mapStringToButtons(String input) {
+        input = input.toLowerCase();
+        ArrayList<Character> output = new ArrayList<>();
+        for (char input_char : input.toCharArray()) {
+            output.add(mapCharToButton(input_char));
         }
+
+        return output;
     }
 
-    return output;
-}
+    public static char mapCharToButton(char c) {
+        char buttons[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+        for (char button : buttons) {
+            if (mapButton(button).contains(c + "")) {
+                return button;
+            }
+        }
+        throw new RuntimeException("Char has no button equiv.");
+    }
 
     public static ArrayList<String> mapButton(char button) throws IllegalArgumentException {
 
