@@ -11,15 +11,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import t9.T9Keyboard;
 import t9.T9Tree;
 import utility.TimeUnit;
 import utility.Timer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by lostincoding on 13.06.17.
@@ -30,6 +34,7 @@ public class Window extends Application {
     private Stage primaryStage;
     private TextField bestguessText;
     private TextField buttonsPressed;
+    private ArrayList<Character> buttonInput = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -39,7 +44,6 @@ public class Window extends Application {
         initTree();
         initRootLayout();
     }
-
 
 
     private void initRootLayout() {
@@ -61,18 +65,11 @@ public class Window extends Application {
 
             bestguessText = (TextField) textgrid.getChildren().get(3);
             buttonsPressed = (TextField) textgrid.getChildren().get(2);
-            Button newword=(Button) textgrid.getChildren().get(4);
+            Button newword = (Button) textgrid.getChildren().get(4);
 
 
             //set action for "new word" button
-            newword.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    tree.newWord();
-                    bestguessText.setText("");
-                    buttonsPressed.setText("");
-                }
-            });
+            newword.setOnAction(e -> clearTreeAndStartOver());
             /*
             * adds a eventhandler for each button which gets the text of the button a forwards it to the tree
             * then it displays the best guess
@@ -83,13 +80,39 @@ public class Window extends Application {
                 tree.processButton(buttonchar);
                 bestguessText.setText(tree.getBestGuess());
                 buttonsPressed.setText(buttonsPressed.getText() + buttonchar);
+                tree.printTree();
             }));
-
+            buttonsPressed.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+                if (event.isConsumed()) return;
+                if (buttonsPressed.getText().length() <= 0) return;
+                buttonInput.clear();
+                char[] chars = buttonsPressed.getText().toLowerCase().toCharArray();
+                for (char c : chars) {
+                    Character mapped = T9Keyboard.mapCharToButton(c);
+                    if (mapped != c) {
+                        c = mapped;
+                    }
+                    buttonInput.add(c);
+                    System.out.println("Char " + c);
+                }
+                buttonsPressed.clear();
+                buttonInput.forEach(c -> buttonsPressed.appendText(c + ""));
+                tree.newWord();
+                buttonInput.forEach(tree::processButton);
+                bestguessText.setText(tree.getBestGuess());
+                tree.printTree();
+            });
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void clearTreeAndStartOver() {
+        tree.newWord();
+        bestguessText.setText("");
+        buttonsPressed.setText("");
     }
 
     public static void main(String args[]) {
@@ -98,7 +121,7 @@ public class Window extends Application {
 
     private void initTree() throws IOException {
         TreeReader reader = new TreeReader();
-        Timer timer=new Timer();
+        Timer timer = new Timer();
 
         System.out.println("Load persisted Tree");
         timer.start();
@@ -110,7 +133,7 @@ public class Window extends Application {
 
         ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator(parseTree);
 
-        tree = new T9Tree(probabilityCalculator, 2);
+        tree = new T9Tree(probabilityCalculator, 5);
     }
 
 }
