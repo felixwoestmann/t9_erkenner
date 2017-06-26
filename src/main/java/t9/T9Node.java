@@ -91,6 +91,13 @@ public class T9Node<T> {
         return history.toString();
     }
 
-
-
+    @Override
+    public String toString() {
+        T9Node node = this;
+        StringBuilder res = new StringBuilder();
+        while (node.getParent() != null) {
+            res.append(node.data.toString());
+        }
+        return res.toString();
+    }
 }

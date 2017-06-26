@@ -2,20 +2,27 @@ package t9;
 
 import crawler.ProbabilityCalculator;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class T9Tree {
     private ArrayList<T9Node<T9DataContainer>> leafs = null;
     private ProbabilityCalculator probCalc = null;
-    private int historySize;
+    private int pathCount;
     private T9Node<T9DataContainer> root = null;
 
-    public T9Tree(ProbabilityCalculator probCalc, int historySize) {
-        root = new T9Node<>(new T9DataContainer(-1, "root"));
+    public T9Tree(ProbabilityCalculator probCalc, short kPathCount) {
+        root = new T9Node<>(new T9DataContainer("root"));
         leafs = getLeafs(root);
         this.probCalc = probCalc;
-        this.historySize = historySize;
+        this.pathCount = kPathCount;
+    }
+
+    public T9Tree(ProbabilityCalculator probCalc, int historySize) {
+        this(probCalc, (short) 10);
+        if (probCalc.getTreeChunksize() != historySize) throw new RuntimeException("history doesn't match chunksize");
     }
 
 
@@ -27,7 +34,7 @@ public class T9Tree {
         leafs.forEach(leaf -> {
             if (leaf.getData().isActive()) {
                 for (String s : list) {
-                    leaf.addChild(new T9DataContainer(1, s));
+                    leaf.addChild(new T9DataContainer(s));
                 }
             }
         });
@@ -35,9 +42,8 @@ public class T9Tree {
         updateLeafs();
         //set Probability for every leaf
         leafs.forEach(this::calcProbabilityForNode);
-
         //mark unprobable leafs as inactive
-        markLeafsInactive(5);
+        markLeafsInactive(this.pathCount);
         //mark as much of the path to a inactive leaf as inactive ,too
         leafs.forEach(leaf -> {
             if (!leaf.getData().isActive()) {
@@ -95,10 +101,10 @@ public class T9Tree {
      * <p>
      * compare P11
      *
-     * @param pathcount
+     * @param pathCount
      */
-    private void markLeafsInactive(int pathcount) {
-        ArrayList<T9Node<T9DataContainer>> kbestPaths = getKBestPaths(pathcount);
+    private void markLeafsInactive(int pathCount) {
+        ArrayList<T9Node<T9DataContainer>> kbestPaths = getKBestPaths(pathCount);
         ArrayList<T9Node<T9DataContainer>> bestSymbolPaths = getBestPathForEveryLeafSymbol();
 
         //mark all leafs as inactive whch are in neither of those lists
@@ -151,20 +157,22 @@ public class T9Tree {
         char c = leaf.getData().getChar();
         double historyProbability = 0;
 
-        if (!isRoot(leaf.getParent())) {
-            historyProbability = leaf.getParent().getData().getProbability();
+        T9Node<T9DataContainer> historyLeaf = leaf;
+        for (int i = 0; i < probCalc.getTreeChunksize(); i++) {
+            if (!isRoot(historyLeaf)) {
+                historyProbability += historyLeaf.getData().getProbability();
+                historyLeaf = historyLeaf.getParent();
+            }
         }
 
         //prob ln P (bn|b1...bn-1) prob of char with prefix
-        double probOfCharWithPrefix = probCalc.probOfCharWithDefinedPrefix(leaf.getHistory(historySize), c);
+        double probOfCharWithPrefix;
+        probOfCharWithPrefix = -Math.log(probCalc.conditionalProbabilityOfLastChar(getPathToRootAsString(leaf)));
         //prob ln P (tn|bn)
-        double probOfPressedButton = probCalc.probOfPressedButtonAndChar(c);
-        //calc ln and invert
-        probOfCharWithPrefix = Math.log(probOfCharWithPrefix) * -1;
-        probOfPressedButton = Math.log(probOfPressedButton) * -1;
+        double probOfPressedButton;
+        probOfPressedButton = -Math.log(probCalc.probOfPressedButtonAndChar(c));
 
-        probability = historyProbability + probOfCharWithPrefix + probOfPressedButton;
-
+        probability = probOfCharWithPrefix + historyProbability;
         leaf.getData().setProbability(probability);
     }
 
@@ -250,6 +258,22 @@ public class T9Tree {
         }
         Collections.reverse(strings);
 
+
+        StringBuilder returnval = new StringBuilder();
+        strings.forEach(returnval::append);
+        return returnval.toString();
+    }
+
+    private String getPathToRootAsString(T9Node<T9DataContainer> node) {
+        LinkedList<String> strings = new LinkedList<>();
+
+        //print out the path of every leaf
+        T9Node<T9DataContainer> actnode = node;
+        while (!isRoot(actnode)) {
+            strings.add(actnode.getData().getChar() + "");
+            actnode = actnode.getParent();
+        }
+        Collections.reverse(strings);
 
         StringBuilder returnval = new StringBuilder();
         strings.forEach(returnval::append);

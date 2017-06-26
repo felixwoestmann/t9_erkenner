@@ -4,10 +4,9 @@ package t9;
  * Created by lostincoding on 09.06.17.
  */
 public class T9DataContainer {
-    private double probability=1;
+    private double probability = 0;
     private String achar;
     private boolean active;
-
 
 
     public String getCharAsString() {
@@ -39,11 +38,17 @@ public class T9DataContainer {
         this.probability = probability;
     }
 
+    public T9DataContainer(String achar) {
+
+        this.probability = 0;
+        this.achar = achar;
+        this.active = true;
+    }
     public T9DataContainer(double probability, String achar) {
 
         this.probability = probability;
         this.achar = achar;
-        this.active=true;
+        this.active = true;
     }
 
     public String toString() {
