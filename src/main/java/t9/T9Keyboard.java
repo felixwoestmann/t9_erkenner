@@ -33,8 +33,8 @@ public class T9Keyboard {
         switch (button) {
             case '1':
                 list.add("1");
-                list.add(".");
-                list.add(",");
+            //    list.add(".");
+              //  list.add(",");
                 return list;
             case '2':
                 list.add("2");
