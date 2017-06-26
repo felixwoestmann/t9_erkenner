@@ -107,7 +107,7 @@ public class CrawlerTree {
         char[] chararray = input.toCharArray();
         StringBuilder sb = new StringBuilder();
         for (char c : chararray) {
-            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c == ' ') {
+            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c == ' ' || c == '.' || c == ',') {
                 sb.append(c);
             }
         }

@@ -15,9 +15,21 @@ public class TestTreeWriter {
         CrawlerTree wikipediaTree;
         TreeWriter writer;
 
-        for (int chunksize = 3; chunksize <= 5; chunksize++) {
+        for (int chunksize = 2; chunksize <= 6; chunksize++) {
             wikipediaTree = new CrawlerTree(chunksize);
-            WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-whole");
+            /*
+             * wikidump-training is missing the following folders from the entire dump:
+             * AE
+             * AJ
+             * AO
+             * AT
+             * AY
+             * BD
+             * BI
+             * BN
+             * BS
+             */
+            WikiDumpReader.processWikiDump(wikipediaTree, "../wikidump-training");
 
             writer = new TreeWriter(wikipediaTree);
             writer.writeToFile(String.format("./tree_%d.json", chunksize));

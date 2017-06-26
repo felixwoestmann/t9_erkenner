@@ -1,6 +1,5 @@
 package crawler;
 
-import crawler.CrawlerTree;
 import utility.FileReader;
 import utility.TimeUnit;
 import utility.Timer;
@@ -13,11 +12,11 @@ import java.util.LinkedList;
  * Created by lostincoding on 09.05.17
  */
 public class WikiDumpReader {
-
+    public static boolean VERBOSE = false;
 
     public static void processWikiDump(CrawlerTree tree, String path) {
         Timer timer = new Timer();
-        System.out.println("Start processing wiki dump");
+        if (VERBOSE) System.out.println("Start processing wiki dump");
 
         timer.start();
         File wikidumpdir = new File(path);
@@ -32,25 +31,26 @@ public class WikiDumpReader {
             if (file.isDirectory()) {
                 tree.processString(processDirectory(file));
                 dircount++;
-                System.out.println("Processed " + dircount + " directories of " + dircontent.length);
+                if (VERBOSE) System.out.println("Processed " + dircount + " directories of " + dircontent.length);
             }
         }
 
         timer.stop();
-        System.out.println("Processing wiki dump took " + timer.getTime(TimeUnit.SECONDS) + " seconds");
+        System.out.format("Processing wiki dump for chunksize %d took %d seconds\n", tree.getChunkSize(), timer.getTime(TimeUnit.SECONDS));
     }
 
     /**
      * Returns a list of words from a wiki dir
      * remove all space,.üäö
      * ans turns it to lower case
+     *
      * @param path
      * @return
      */
 
     public static LinkedList<String> getWords(String path) {
         File wikidumpdir = new File(path);
-        LinkedList<String> list=new LinkedList<>();
+        LinkedList<String> list = new LinkedList<>();
 
 
         if (!wikidumpdir.isDirectory()) {
@@ -62,12 +62,12 @@ public class WikiDumpReader {
         for (File file : dircontent) {
             if (file.isDirectory()) {
                 for (String s : processDirectory(file).toLowerCase().split(" ")) {
-                    s=s.trim();
-                    boolean containsinvalidchars=false;
+                    s = s.trim();
+                    boolean containsinvalidchars = false;
 
                     for (char c : s.toCharArray()) {
-                        if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') ){
-                            containsinvalidchars=true;
+                        if (!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z')) {
+                            containsinvalidchars = true;
                             break;
                         }
                     }
