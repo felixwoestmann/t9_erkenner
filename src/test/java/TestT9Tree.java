@@ -1,3 +1,4 @@
+import com.opencsv.CSVWriter;
 import crawler.CrawlerTree;
 import crawler.ProbabilityCalculator;
 import crawler.TreeReader;
@@ -134,7 +135,7 @@ public class TestT9Tree {
             }
         }
 
-        short[] pathcounts = {5, 10, 50, 100};
+        short[] pathcounts = {2, 5, 10, 20, 50, 100};
         short[] historysizes = {2, 3, 4, 5, 6};
         List<Container> errorRates = new ArrayList<>();
 
@@ -147,8 +148,17 @@ public class TestT9Tree {
         errorRates.sort(Comparator.comparingDouble(c -> c.errorRate));
         System.out.format("Path | History | Error Rate\n-----+---------+-----------\n");
         for (Container c : errorRates) {
-            System.out.format("%3d  |    %1d    | %.4f\n", c.pathCount, c.historysize, c.errorRate);
+            System.out.format("%3d  |    %1d    | %.5f\n", c.pathCount, c.historysize, c.errorRate);
         }
+
+        CSVWriter writer = new CSVWriter(new FileWriter("resultMatrix5er.csv"), ';');
+        // feed in your array (or convert your data to an array)
+        writer.writeNext(new String[]{"Pathsize", "History Count", "Error Rate" });
+
+        for (Container c : errorRates) {
+            writer.writeNext(new String[]{String.valueOf(c.pathCount), String.valueOf(c.historysize), String.valueOf(c.errorRate)}, false);
+        }
+        writer.close();
     }
 
     @Test
