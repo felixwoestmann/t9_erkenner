@@ -1,5 +1,5 @@
 set xlabel "Pathsize"
-set xtics (2, 5, 10, 20, 50, 100)
+set xtics (2, 5, 10, 20, 30, 50, 60, 70, 100)
 set ylabel "HistoryCount"
 set ytics 2,1,6
 set zlabel "Error Rate"
