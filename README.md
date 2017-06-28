@@ -1,17 +1,15 @@
-# asp_crawler
+# T9 Erkenner
 
-Der Crawler kann einen Baum mit Texten füttern um so die Wahrscheinlichkeit von Buchstbenfolgen zu berechnen.
-Dieser kann dann von T9 Bot verwendet werden.
+Dieses Programm wurde im Rahmen unserer Automatische Sprachverarbeitung Vorlesung entwickelt.
+Der T9 Erkenner besteht aus einem Crawler, welcher mittels eines Textkorpus angelernt werden kann und einem Erkenner, welcher die zu erkennenden Tastendrücke verarbeitet.
 
-Die aktuelle Konfiguration lädt ein Verzeichniss welches mittels [wikiextractor](https://github.com/attardi/wikiextractor) aus einem Wikipedia XML Data Dump erzeugt wurde.
-*Ein mit dem Wikiextractor bearbeiteter Dumb liegt als tar.bz2 [in meinem Drive](https://drive.google.com/open?id=0B7TjX_lUHxQgVnhxRmJOYXhQd1U) Zum entpacken bietet sich pbzip2 an, das ist Multi Threaded. Der Pfad zum Directory des Dumbs muss geändert werden.*
+Die Software ist lauffähig. Im Repository sind 5 Bäume (bspw. tree_2.json) enthalten. Es handelt sich um Crawler Bäume die mit der deutschen Wikipedia in unterschiedlichen tiefen trainiert wurden.
 
-Es lernt damit den Baum in 5er Chunks an und schreibt ihn in eine JSON Datei. Der Pfad zu dieser Datei muss angepasst werden.
+Bei Fragen helfen wir gerne weiter!
 
 
-## ToDo
-### Höhere Priorität
-[ ]	Titel: Optimiere Schreib Prozess des JSON.  
-	  Beschreibung: Aktuell wird der Baum in 5er Chunks gefüttert. Sollen die Chunks größer sein hat Java (Aufgrund der erhöhten Anzahl von Knoten im Baum) nicht genügend HEAP.
-	  Das ist Problematisch, wenn wir die Größe der Chunks optimieren wollen.
-	  Die Methode sollte daher den Baum in Teilen verarbeiten können.   
+Die Autoren:
+- Marc
+- Felix
+
+Münster den 20.06.2017
